@@ -1,42 +1,24 @@
-import { getVenues } from '@/actions/venues';
 import Image from 'next/image';
 import MapGL from '@/components/MapGL';
+import { getPrices } from '@/actions/getPrices';
 
-const getData = async () => {
-  const { venues, error } = await getVenues();
-  console.log(venues[0]);
-  console.log(error);
-};
+export default async function Home() {
+  const { prices, error } = await getPrices('Latte', 'Regular');
 
-const markers = [
-  {
-    id: '1',
-    longitude: 144.9906622,
-    latitude: -37.8297642,
-    title: 'HomeGround Cremorne',
-    price: 4.5,
-  },
-  {
-    id: '2',
-    longitude: 144.9589,
-    latitude: -37.8208,
-    title: 'ST. ALi',
-    price: 4.8,
-  },
-];
-
-export default function Home() {
-  //getData();
+  if (error || !prices) {
+    console.error('Error fetching prices:', error);
+    return <div>Error loading map data</div>;
+  }
   return (
     <>
-      <MapGL markers={markers} />
+      <MapGL markers={prices} />
     </>
   );
 
   return (
     <div className='grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]'>
       <main className='flex flex-col gap-8 row-start-2 items-center sm:items-start'>
-        <Map />
+        {/* <Map /> */}
       </main>
       <footer className='row-start-3 flex gap-6 flex-wrap items-center justify-center'>
         <a

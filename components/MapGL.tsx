@@ -2,17 +2,11 @@
 import { FC, useEffect, useState } from 'react';
 import Map, { Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-interface MarkerData {
-  id: string;
-  longitude: number;
-  latitude: number;
-  title?: string;
-  price?: number;
-}
+import { MarkerData } from '@/types/types';
+import { getRatingColor } from '@/utils/ratingColors';
 
 interface MapGLProps {
-  markers?: MarkerData[];
+  markers: MarkerData[];
 }
 
 const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
@@ -46,13 +40,30 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
         style={dimensions}
         mapStyle='mapbox://styles/petherem/cl2hdvc6r003114n2jgmmdr24'
       >
-        {markers.map((marker) => (
+        {markers.map((marker, index) => (
           <Marker
-            key={marker.id}
-            longitude={marker.longitude}
-            latitude={marker.latitude}
+            key={index}
+            longitude={Number(marker.longitude) || 0}
+            latitude={Number(marker.latitude) || 0}
           >
-            <div className='bg-black/50 text-white rounded-full px-2 py-1 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 hover:text-black transition-colors'>
+            <div
+              className='rounded-full px-2 py-1 shadow-lg cursor-pointer transition-all duration-200 border-2'
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderColor: getRatingColor(marker.rating),
+                color: 'white',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = getRatingColor(
+                  marker.rating
+                );
+                e.currentTarget.style.color = 'black';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                e.currentTarget.style.color = 'white';
+              }}
+            >
               <span className='text-sm font-medium'>
                 ${marker.price?.toFixed(2)}
               </span>
@@ -65,6 +76,8 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
 };
 
 export default MapGL;
+
+// ${marker.price?.toFixed(2)}
 
 {
   /* <div className='text-red-500 cursor-pointer'>
