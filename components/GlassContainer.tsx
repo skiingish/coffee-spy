@@ -12,12 +12,13 @@ const GlassContainer: FC<GlassContainerProps> = ({
   return (
     <div
       className={`
-        bg-white/15 
+        bg-black/40 
         rounded-2xl 
         shadow-[0_4px_30px_rgba(0,0,0,0.1)]
         backdrop-blur-[4px]
         border
         border-white/30
+        text-white
         ${className}
       `}
     >

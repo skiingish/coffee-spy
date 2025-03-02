@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
 import GlassContainer from './GlassContainer';
+import MarkerDrawer from './MarkerDrawer';
 
 interface MapGLProps {
   markers: MarkerData[];
@@ -15,6 +16,9 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
     width: '100%',
     height: '100vh',
   });
+
+  const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,6 +32,11 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleMarkerClick = (marker: MarkerData) => {
+    setSelectedMarker(marker);
+    setIsDrawerOpen(true);
+  };
 
   return (
     <div className='min-h-screen w-full'>
@@ -64,6 +73,7 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
                 e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 e.currentTarget.style.color = 'white';
               }}
+              onClick={() => handleMarkerClick(marker)}
             >
               <span className='text-sm font-medium'>
                 ${marker.price?.toFixed(2)}
@@ -74,6 +84,11 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
         <GlassContainer className='p-6'>
           <h1>Your Content Here</h1>
         </GlassContainer>
+        <MarkerDrawer
+          isOpen={isDrawerOpen}
+          onOpenChange={setIsDrawerOpen}
+          marker={selectedMarker}
+        />
       </Map>
     </div>
   );
