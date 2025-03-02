@@ -4,6 +4,7 @@ import Map, { Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
+import GlassContainer from './GlassContainer';
 
 interface MapGLProps {
   markers: MarkerData[];
@@ -70,6 +71,9 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
             </div>
           </Marker>
         ))}
+        <GlassContainer className='p-6'>
+          <h1>Your Content Here</h1>
+        </GlassContainer>
       </Map>
     </div>
   );
