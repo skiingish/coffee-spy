@@ -19,6 +19,7 @@ export async function getPrices(name: string, size: string, modifier?: string, h
         const results = await db
             .select({
                 venue_name: venues.name,
+                venues_id: venues.id,
                 price: coffeeReports.price,
                 latitude: venues.latitude,
                 longitude: venues.longitude,

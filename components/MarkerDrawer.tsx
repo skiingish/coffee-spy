@@ -8,6 +8,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
+import AddCoffeeReport from './AddCoffeeReport';
+import { Rating } from './ui/rating';
 
 interface MarkerDrawerProps {
   isOpen: boolean;
@@ -39,19 +41,18 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
         </SheetHeader>
         <div className='py-4 text-white'>
           <div className='mb-4'>
-            <h3 className='text-sm font-medium'>Rating</h3>
-            <div
-              className='inline-block px-2 py-1 rounded mt-1'
-              style={{
-                backgroundColor: getRatingColor(marker.rating),
-                color: '#000',
-              }}
-            >
-              {marker.rating || 'N/A'}/5
+            <h3 className='text-sm font-medium'>Current Rating</h3>
+            <div className='inline-block px-2 py-1 mt-1'>
+              <Rating value={marker.rating || 0} readOnly />
             </div>
           </div>
 
           {/* Add chart of price reports over time */}
+
+          <div className='mt-4'>
+            <h2>Add a report</h2>
+            <AddCoffeeReport />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

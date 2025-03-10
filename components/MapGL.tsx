@@ -33,6 +33,10 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  if (markers.length === 0) {
+    return <div>No markers to display</div>;
+  }
+
   const handleMarkerClick = (marker: MarkerData) => {
     setSelectedMarker(marker);
     setIsDrawerOpen(true);

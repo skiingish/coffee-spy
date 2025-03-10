@@ -1,5 +1,6 @@
 import { venues } from '@/db/schema/venues';
 import { db } from '@/lib/db';
+
 export async function getVenues() {
     try {
         const allVenues = await db.select().from(venues)
