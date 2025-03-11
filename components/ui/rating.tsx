@@ -2,7 +2,7 @@
 
 import { forwardRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Star, StarHalf } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 interface RatingProps {
   value: number | null;
@@ -88,7 +88,7 @@ const Rating = forwardRef<HTMLDivElement, RatingProps>(
             {/* Background (inactive) star */}
             <Star
               className={cn(
-                'h-10 w-10 stroke-1',
+                'h-8 w-8 stroke-1',
                 inactiveClassName || 'text-muted-foreground'
               )}
             />
@@ -97,7 +97,7 @@ const Rating = forwardRef<HTMLDivElement, RatingProps>(
             {displayValue && displayValue >= starIndex ? (
               <Star
                 className={cn(
-                  'absolute top-0 left-0 h-10 w-10 fill-current stroke-1',
+                  'absolute top-0 left-0 h-8 w-8 fill-current stroke-1',
                   activeClassName || 'text-amber-400'
                 )}
               />
@@ -107,7 +107,7 @@ const Rating = forwardRef<HTMLDivElement, RatingProps>(
               <div className='absolute top-0 left-0 w-1/2 h-full overflow-hidden'>
                 <Star
                   className={cn(
-                    'h-10 w-10 fill-current stroke-1',
+                    'h-8 w-8 fill-current stroke-1',
                     activeClassName || 'text-amber-400'
                   )}
                 />

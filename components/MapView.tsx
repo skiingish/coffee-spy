@@ -2,16 +2,19 @@
 import { FC, useEffect, useState } from 'react';
 import Map, { Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { MarkerData } from '@/types/types';
+import { CoffeeTypeObject, MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
 import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
+import CoffeeSelector from './CoffeeSelector';
+import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 
-interface MapGLProps {
+interface MapViewProps {
   markers: MarkerData[];
+  coffeeTypes: CoffeeTypeObject[];
 }
 
-const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
+const MapView: FC<MapViewProps> = ({ markers = [] }) => {
   const [dimensions, setDimensions] = useState({
     width: '100%',
     height: '100vh',
@@ -19,6 +22,23 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
 
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedCoffeeType, setSelectedCoffeeType] =
+    useState<CoffeeType>('Latte');
+  const [selectedSize, setSelectedSize] = useState<CoffeeSize>('Regular');
+  const [selectedMilkType, setSelectedMilkType] =
+    useState<CoffeeMilkType>('FullCream');
+
+  const onCoffeeTypeChange = (value: CoffeeType) => {
+    setSelectedCoffeeType(value);
+  };
+
+  const onSizeChange = (value: CoffeeSize) => {
+    setSelectedSize(value);
+  };
+
+  const onMilkTypeChange = (value: CoffeeMilkType) => {
+    setSelectedMilkType(value);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -85,20 +105,33 @@ const MapGL: FC<MapGLProps> = ({ markers = [] }) => {
             </div>
           </Marker>
         ))}
-        <GlassContainer className='p-6'>
-          <h1>Your Content Here</h1>
+        <GlassContainer className='p-4 m-2'>
+          <h1 className='text-lg font-semibold'>Coffee Spotter</h1>
+          <CoffeeSelector
+            selectedCoffeeType={selectedCoffeeType}
+            selectedMilkType={selectedMilkType}
+            selectedSize={selectedSize}
+            onCoffeeTypeChange={onCoffeeTypeChange}
+            onMilkTypeChange={onMilkTypeChange}
+            onSizeChange={onSizeChange}
+          />
         </GlassContainer>
         <MarkerDrawer
           isOpen={isDrawerOpen}
           onOpenChange={setIsDrawerOpen}
           marker={selectedMarker}
+          selectedCoffeeType={{
+            coffeeType: selectedCoffeeType,
+            coffeeSize: selectedSize,
+            coffeeMilkType: selectedMilkType,
+          }}
         />
       </Map>
     </div>
   );
 };
 
-export default MapGL;
+export default MapView;
 
 // ${marker.price?.toFixed(2)}
 

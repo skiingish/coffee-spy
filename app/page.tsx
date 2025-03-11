@@ -1,17 +1,19 @@
 import Image from 'next/image';
-import MapGL from '@/components/MapGL';
-import { getPrices } from '@/actions/getPrices';
+import MapView from '@/components/MapView';
+import { getPrices } from '@/actions/prices';
+import { getCoffeeTypes } from '@/actions/coffeeTypes';
 
 export default async function Home() {
+  const { coffeeTypes } = await getCoffeeTypes();
   const { prices, error } = await getPrices('Latte', 'Regular');
 
-  if (error || !prices) {
+  if (error || !prices || !coffeeTypes) {
     console.error('Error fetching prices:', error);
     return <div>Error loading map data</div>;
   }
   return (
     <>
-      <MapGL markers={prices} />
+      <MapView markers={prices} coffeeTypes={coffeeTypes} />
     </>
   );
 

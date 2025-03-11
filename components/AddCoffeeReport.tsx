@@ -1,5 +1,5 @@
 'use client';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,15 +15,36 @@ import {
 import { Button } from './ui/button';
 import { NumberInput } from './ui/numberInput';
 import { Rating } from './ui/rating';
+import {
+  CoffeeMilkType,
+  CoffeeType,
+  CoffeeSize,
+  CoffeeTypes,
+  CoffeeSizes,
+  CoffeeMilkTypes,
+} from '@/types/coffeeTypes';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 interface AddCoffeeReportProps {
   venueId?: number;
-  coffeeId?: number;
+  selectedCoffeeType: {
+    coffeeType: CoffeeType;
+    coffeeSize: CoffeeSize;
+    coffeeMilkType: CoffeeMilkType;
+  };
 }
 
 const formSchema = z.object({
   venueId: z.number(),
-  coffeeId: z.number(),
+  coffeeSize: z.string(),
+  coffeeMilkType: z.string(),
+  coffeeType: z.string(),
   price: z
     .number()
     .min(0, {
@@ -37,13 +58,17 @@ const formSchema = z.object({
 
 const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   venueId = 1,
-  coffeeId = 1,
+  selectedCoffeeType,
 }) => {
+  const [editingCoffee, setEditingCoffee] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       venueId: venueId,
-      coffeeId: coffeeId,
+      coffeeSize: selectedCoffeeType.coffeeSize,
+      coffeeMilkType: selectedCoffeeType.coffeeMilkType,
+      coffeeType: selectedCoffeeType.coffeeType,
       price: undefined,
       rating: undefined,
     },
@@ -55,16 +80,112 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
     console.log(values);
   }
 
+  const selectedCoffeeTypeString = `A ${selectedCoffeeType.coffeeSize}, ${selectedCoffeeType.coffeeMilkType}, ${selectedCoffeeType.coffeeType}`;
+
   return (
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <div className='flex flex-col gap-2'>
+            {!editingCoffee ? (
+              <>
+                <h2>{selectedCoffeeTypeString}</h2>
+                <Button
+                  className='text-gray-500'
+                  variant='ghost'
+                  size='sm'
+                  type='button'
+                  onClick={() => setEditingCoffee(true)}
+                >
+                  Wrong coffee?
+                </Button>
+              </>
+            ) : (
+              <div className='space-y-4'>
+                <FormField
+                  control={form.control}
+                  name='coffeeType'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Coffee Type</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger id='coffee-type'>
+                          <SelectValue placeholder='Select coffee type' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(CoffeeTypes).map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {CoffeeTypes[type as CoffeeType]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='coffeeSize'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Size</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger id='coffee-size'>
+                          <SelectValue placeholder='Select size' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(CoffeeSizes).map((size) => (
+                            <SelectItem key={size} value={size}>
+                              {CoffeeSizes[size as CoffeeSize]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='coffeeMilkType'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Milk Type</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger id='milk-type'>
+                          <SelectValue placeholder='Select milk type' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(CoffeeMilkTypes).map((milk) => (
+                            <SelectItem key={milk} value={milk}>
+                              {CoffeeMilkTypes[milk as CoffeeMilkType]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+          </div>
+
           <FormField
             control={form.control}
             name='price'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price</FormLabel>
+                <FormLabel>Cost Me</FormLabel>
                 <FormControl>
                   <NumberInput
                     placeholder='5.80'
@@ -90,14 +211,16 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
             name='rating'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Rating</FormLabel>
+                <FormLabel>And the experience was</FormLabel>
                 <FormControl>
-                  <Rating
-                    value={field.value}
-                    onChange={field.onChange}
-                    max={5}
-                    allowHalf={true}
-                  />
+                  <div className='mt-1'>
+                    <Rating
+                      value={field.value}
+                      onChange={field.onChange}
+                      max={5}
+                      allowHalf={true}
+                    />
+                  </div>
                 </FormControl>
                 <FormDescription>
                   How would you rate this coffee and venue?
