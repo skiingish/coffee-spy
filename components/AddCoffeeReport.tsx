@@ -30,6 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { submitReport } from '@/actions/report';
+import { toast } from 'sonner';
 
 interface AddCoffeeReportProps {
   venueId?: number;
@@ -38,6 +40,7 @@ interface AddCoffeeReportProps {
     coffeeSize: CoffeeSize;
     coffeeMilkType: CoffeeMilkType;
   };
+  onOpenChange?: (open: boolean) => void;
 }
 
 const formSchema = z.object({
@@ -59,6 +62,7 @@ const formSchema = z.object({
 const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   venueId = 1,
   selectedCoffeeType,
+  onOpenChange,
 }) => {
   const [editingCoffee, setEditingCoffee] = useState(false);
 
@@ -75,9 +79,30 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    console.log('Submitting report:', values);
+    // Call the server action with the form values
+    submitReport({
+      venueId: values.venueId,
+      coffeeType: values.coffeeType as CoffeeType,
+      coffeeSize: values.coffeeSize as CoffeeSize,
+      coffeeMilkType: values.coffeeMilkType as CoffeeMilkType,
+      price: values.price,
+      rating: values.rating,
+    }).then((response) => {
+      if (response.success) {
+        // Use the onOpenChange prop to close the drawer
+        if (onOpenChange) {
+          onOpenChange(false);
+        }
+
+        toast('Your coffee report has been submitted.');
+
+        form.reset();
+      } else {
+        console.error('Failed to submit report:', response.error);
+        toast.error('Failed to submit your report.');
+      }
+    });
   }
 
   const selectedCoffeeTypeString = `A ${selectedCoffeeType.coffeeSize}, ${selectedCoffeeType.coffeeMilkType}, ${selectedCoffeeType.coffeeType}`;

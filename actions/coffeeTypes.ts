@@ -1,3 +1,5 @@
+'use server';
+
 import { coffeeTypes } from '@/db/schema/coffeeTypes';
 import { db } from '@/lib/db';
 

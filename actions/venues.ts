@@ -1,3 +1,5 @@
+'use server';
+
 import { venues } from '@/db/schema/venues';
 import { db } from '@/lib/db';
 

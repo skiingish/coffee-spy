@@ -1,3 +1,4 @@
+'use server';
 import { db } from '@/lib/db';
 import { venues } from "@/db/schema/venues";
 import { coffeeReports } from "@/db/schema/coffeeReports";
@@ -24,13 +25,31 @@ export async function getPrices(name: string, size: string, modifier?: string, h
                 price: coffeeReports.price,
                 latitude: venues.latitude,
                 longitude: venues.longitude,
-                rating: coffeeReports.rating
+                rating: coffeeReports.rating,
+                created_at: coffeeReports.created_at,
             })
             .from(venues)
             .innerJoin(coffeeReports, eq(venues.id, coffeeReports.venue_id))
             .innerJoin(coffeeTypes, eq(coffeeReports.coffee_id, coffeeTypes.id))
             .where(and(...conditions));
+        
+        console.log('Fetched prices:', results);
 
+        // Filter results to get only the latest entry per venue
+        const latestPricesByVenue = Object.values(
+            results.reduce((acc, item) => {
+                if (!acc[item.venue_id] || new Date(item.created_at) > new Date(acc[item.venue_id].created_at)) {
+                    acc[item.venue_id] = item;
+                }
+                return acc;
+            }, {} as Record<number, typeof results[0]>)
+        );
+
+        // Replace results with filtered data
+        results.length = 0;
+        results.push(...latestPricesByVenue);
+
+        console.log('Filtered prices:', results);
 
         return { prices: results, error: null };
     } catch (error) {

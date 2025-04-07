@@ -61,6 +61,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
               <AddCoffeeReport
                 venueId={marker.venue_id}
                 selectedCoffeeType={selectedCoffeeType}
+                onOpenChange={onOpenChange}
               />
             </div>
           </div>

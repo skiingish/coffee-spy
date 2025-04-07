@@ -14,7 +14,7 @@ export const coffeeReports = pgTable('coffee-reports', {
         onUpdate: 'cascade'
     }),
     price: doublePrecision('price'),
-    rating: bigint('rating', { mode: 'number' }),
+    rating: doublePrecision('rating'),
     comments: varchar('comments'),
     hidden: boolean('hidden').notNull().default(false)
 });
