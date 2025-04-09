@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { MarkerData } from '@/types/types';
+import { FC, useEffect, useState } from 'react';
+import { CoffeeReportObject, MarkerData } from '@/types/types';
 import {
   Sheet,
   SheetContent,
@@ -10,6 +10,7 @@ import {
 import AddCoffeeReport from './AddCoffeeReport';
 import { Rating } from './ui/rating';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
+import { getReportsByVenueId } from '@/actions/report';
 
 interface MarkerDrawerProps {
   isOpen: boolean;
@@ -22,12 +23,47 @@ interface MarkerDrawerProps {
   };
 }
 
+const getAvgRating = (reports: CoffeeReportObject[]) => {
+  console.log('Reports:', reports);
+  if (reports.length === 0) return 0;
+
+  const validReports = reports.filter((report) => report.rating != null);
+  if (validReports.length === 0) return 0;
+
+  const totalRating = validReports.reduce(
+    (acc, report) => acc + (report.rating || 0),
+    0
+  );
+  return totalRating / validReports.length;
+};
+
 const MarkerDrawer: FC<MarkerDrawerProps> = ({
   isOpen,
   onOpenChange,
   marker,
   selectedCoffeeType,
 }) => {
+  const [reports, setReports] = useState<CoffeeReportObject[]>([]); // Adjust type as needed
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen && marker?.venue_id) {
+      setLoading(true);
+      const getReports = async () => {
+        const res = await getReportsByVenueId(marker.venue_id);
+        if (res.error) {
+          console.error('Error fetching reports:', res.error);
+          return;
+        }
+        if (res.reports) {
+          setReports(res.reports);
+        }
+        setLoading(false);
+      };
+      getReports();
+    }
+  }, [marker?.venue_id, isOpen]);
+
   if (!marker) return null;
 
   //  bg-[#E6D5BC]/10 // #4A381C
@@ -48,9 +84,24 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
         <div className='py-4 text-white'>
           <div className='mb-8'>
             <h3 className='text-sm font-medium'>Current Venue Rating</h3>
-            <div className='inline-block py-1 mt-1'>
-              <Rating value={marker.rating || 0} readOnly />
-            </div>
+            {loading ? (
+              <div className='animate-pulse flex space-x-1 mt-2'>
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className='h-8 w-8 rounded-full bg-white/20'
+                  ></div>
+                ))}
+              </div>
+            ) : (
+              <div className='inline-block py-1 mt-1'>
+                <Rating value={getAvgRating(reports) || 0} readOnly />
+                <span className='text-sm font-medium ml-2'>
+                  {reports.length} report
+                  {reports.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Add chart of price reports over time */}

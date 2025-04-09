@@ -17,6 +17,17 @@ export interface CoffeeTypeObject {
     created_at?: Date;
 } 
 
+export interface CoffeeReportObject {
+    id: number;
+    venue_id: number;
+    coffee_id: number;
+    price?: number | null;
+    rating?: number | null;
+    comments?: string | null;
+    hidden: boolean;
+    created_at: Date;
+}
+
 
 
 

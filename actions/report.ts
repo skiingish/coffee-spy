@@ -6,6 +6,7 @@ import { coffeeTypes } from '@/db/schema/coffeeTypes';
 import { and, eq } from 'drizzle-orm';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { revalidatePath } from 'next/cache';
+import { CoffeeReportObject } from '@/types/types';
 
 interface SubmitReportParams {
     venueId: number;
@@ -100,5 +101,20 @@ export async function refreshReportData(paths: string[] = []) {
     } catch (error) {
         console.error('Error refreshing report data:', error);
         return { success: false, error: 'Failed to refresh data' };
+    }
+}
+
+// Get reports by venue ID
+export async function getReportsByVenueId(venueId: number): Promise<{ reports: CoffeeReportObject[] | null; error: string | null }> {
+    try {
+        const reports = await db
+            .select()
+            .from(coffeeReports)
+            .where(eq(coffeeReports.venue_id, venueId))
+
+        return { reports, error: null };
+    } catch (error) {
+        console.error('Error fetching reports:', error);
+        return { reports: null, error: 'Failed to fetch reports' };
     }
 }
