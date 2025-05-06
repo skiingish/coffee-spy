@@ -116,7 +116,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
               <>
                 <h2>{selectedCoffeeTypeString}</h2>
                 <Button
-                  className='text-gray-500'
+                  className='text-muted'
                   variant='ghost'
                   size='sm'
                   type='button'

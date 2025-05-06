@@ -17,12 +17,10 @@ import {
   CoffeeSizes,
   CoffeeTypes,
 } from '@/types/coffeeTypes';
-import { ChevronDown, Info } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as motion from 'motion/react-client';
 import { AnimatePresence } from 'motion/react';
-import { Checkbox } from './ui/checkbox';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 interface CoffeeSelectorProps {
   selectedCoffeeType: CoffeeType;
@@ -56,7 +54,7 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
         className='flex justify-between items-center cursor-pointer'
         onClick={toggleExpanded}
       >
-        <div className='text-base font-medium capitalize'>
+        <div className='font-small text-muted capitalize'>
           {isExpanded ? 'Coffee Selection' : summaryText}
         </div>
         <motion.div whileTap={{ scale: 0.95 }}>
