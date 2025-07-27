@@ -8,6 +8,7 @@ import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
+import { Coffee } from 'lucide-react';
 
 interface MapViewProps {
   markers: MarkerData[];
@@ -100,7 +101,7 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
               onClick={() => handleMarkerClick(marker)}
             >
               <span className='text-sm font-medium'>
-                ${marker.price?.toFixed(2)}
+                {marker.price ? `$${marker.price.toFixed(2)}` : <Coffee className='inline' />}
               </span>
             </div>
           </Marker>

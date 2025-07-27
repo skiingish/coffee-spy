@@ -65,8 +65,12 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
-      <SheetPrimitive.Close className='absolute right-4 top-4 text-card hover:bg-muted/50 focus:outline-none transition-colors'>
-        <Button variant='ghost' size='icon'>
+      <SheetPrimitive.Close asChild>
+        <Button 
+          variant='ghost' 
+          size='icon'
+          className='absolute right-4 top-4 text-card hover:bg-muted/50 focus:outline-none transition-colors'
+        >
           <X className='h-4 w-4' />
           <span className='sr-only'>Close</span>
         </Button>

@@ -21,7 +21,7 @@ export default async function Home() {
     venue_name: venue.name,
     venue_id: venue.id,
     coffee_id: coffeeTypes[0]?.id, // Using the first coffee type as default
-    price: priceMap.get(venue.id) || 0,
+    price: priceMap.get(venue.id) || null,
     rating: null, // Add default rating if needed
     latitude: venue.latitude,
     longitude: venue.longitude,
