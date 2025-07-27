@@ -1,7 +1,7 @@
 export interface MarkerData {
     venue_name: string;
     venue_id: number;
-    coffee_id: number;
+    coffee_id: number | null;
     longitude: number | string | null;
     latitude: number | string | null;
     price: number | null;
