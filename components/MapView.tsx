@@ -59,15 +59,23 @@ const MapView: FC<MapViewProps> = ({
     setIsDrawerOpen(true);
   };
 
+  const avg = (arr: number[]) => {
+    if (arr.length === 0) return 0;
+    const sum = arr.reduce((acc, val) => acc + val, 0);
+    return sum / arr.length;
+  };
+
+  const initialViewState = {
+    longitude: avg(markers.map(m => m.longitude).filter((lng): lng is number => lng !== null).map(Number)),
+    latitude: avg(markers.map(m => m.latitude).filter((lat): lat is number => lat !== null).map(Number)),
+    zoom: 13,
+  };
+
   return (
     <div className='min-h-screen w-full'>
       <Map
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-        initialViewState={{
-          longitude: 144.9412986,
-          latitude: -37.8623672,
-          zoom: 12,
-        }}
+        initialViewState={initialViewState}
         style={dimensions}
         mapStyle='mapbox://styles/petherem/cl2hdvc6r003114n2jgmmdr24'
       >

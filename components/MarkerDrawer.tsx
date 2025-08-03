@@ -75,15 +75,15 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
         backdrop-blur-[4px]'
         side='right'
       >
-        <SheetHeader className='text-left mb-4'>
+        <SheetHeader className='text-left p-4'>
           <SheetTitle className='text-white'>{marker.venue_name}</SheetTitle>
           <SheetDescription className='text-white font-medium'>
             Reported price: ${marker.price?.toFixed(2)}
           </SheetDescription>
         </SheetHeader>
         <div className='py-4 text-white'>
-          <div className='mb-8'>
-            <h3 className='text-sm font-medium'>Current Venue Rating</h3>
+          <div className='mb-2 p-4'>
+            <h3 className='text-sm font-medium'>Current Rating</h3>
             {loading ? (
               <div className='animate-pulse flex space-x-1 mt-2'>
                 {[...Array(5)].map((_, i) => (
@@ -106,7 +106,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
 
           {/* Add chart of price reports over time */}
 
-          <div className='mt-4'>
+          <div className='mt-4 bg-slate-800/30 backdrop-blur-md p-4 rounded-lg'>
             <h1 className='text-lg font-semibold'>Add a report</h1>
             <div className='mt-2'>
               <AddCoffeeReport
