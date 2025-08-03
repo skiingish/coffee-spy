@@ -5,13 +5,17 @@ import { coffeeReports } from "@/db/schema/coffeeReports";
 import { coffeeTypes } from "@/db/schema/coffeeTypes";
 import { eq, and } from "drizzle-orm";
 
-export async function getPrices(name: string, size: string, modifier?: string, hidden: boolean = false) {
+export async function getPrices(name: string, size: string, milkType?: string, modifier?: string, hidden: boolean = false) {
     try {
         const conditions = [
             eq(coffeeTypes.name, name),
             eq(coffeeTypes.size, size),
             eq(coffeeReports.hidden, hidden)
         ];
+
+        if (milkType) {
+            conditions.push(eq(coffeeTypes.milkType, milkType));
+        }
 
         if (modifier) {
             conditions.push(eq(coffeeTypes.modifier, modifier));

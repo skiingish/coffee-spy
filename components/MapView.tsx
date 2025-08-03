@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import Map, { Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { CoffeeTypeObject, MarkerData } from '@/types/types';
+import { MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
 import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
@@ -12,10 +12,23 @@ import { Coffee } from 'lucide-react';
 
 interface MapViewProps {
   markers: MarkerData[];
-  coffeeTypes: CoffeeTypeObject[];
+  selectedCoffeeType: CoffeeType;
+  selectedSize: CoffeeSize;
+  selectedMilkType: CoffeeMilkType;
+  onCoffeeTypeChange: (value: CoffeeType) => void;
+  onSizeChange: (value: CoffeeSize) => void;
+  onMilkTypeChange: (value: CoffeeMilkType) => void;
 }
 
-const MapView: FC<MapViewProps> = ({ markers = [] }) => {
+const MapView: FC<MapViewProps> = ({ 
+  markers = [], 
+  selectedCoffeeType,
+  selectedSize,
+  selectedMilkType,
+  onCoffeeTypeChange,
+  onSizeChange,
+  onMilkTypeChange
+}) => {
   const [dimensions, setDimensions] = useState({
     width: '100%',
     height: '100vh',
@@ -23,23 +36,6 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
 
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedCoffeeType, setSelectedCoffeeType] =
-    useState<CoffeeType>('Latte');
-  const [selectedSize, setSelectedSize] = useState<CoffeeSize>('Regular');
-  const [selectedMilkType, setSelectedMilkType] =
-    useState<CoffeeMilkType>('FullCream');
-
-  const onCoffeeTypeChange = (value: CoffeeType) => {
-    setSelectedCoffeeType(value);
-  };
-
-  const onSizeChange = (value: CoffeeSize) => {
-    setSelectedSize(value);
-  };
-
-  const onMilkTypeChange = (value: CoffeeMilkType) => {
-    setSelectedMilkType(value);
-  };
 
   useEffect(() => {
     const handleResize = () => {

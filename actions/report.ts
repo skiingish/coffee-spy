@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { coffeeReports } from '@/db/schema/coffeeReports';
 import { coffeeTypes } from '@/db/schema/coffeeTypes';
 import { and, eq } from 'drizzle-orm';
-import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
+import { CoffeeMilkType, CoffeeSize, CoffeeType, CoffeeTypes, CoffeeSizes, CoffeeMilkTypes } from '@/types/coffeeTypes';
 import { revalidatePath } from 'next/cache';
 import { CoffeeReportObject } from '@/types/types';
 
@@ -28,15 +28,20 @@ export async function submitReport({
     comments,
 }: SubmitReportParams) {
     try {
+        // Convert enum keys to their corresponding string values
+        const coffeeTypeValue = CoffeeTypes[coffeeType] || coffeeType;
+        const coffeeSizeValue = CoffeeSizes[coffeeSize] || coffeeSize;
+        const coffeeMilkTypeValue = CoffeeMilkTypes[coffeeMilkType] || coffeeMilkType;
+
         // First, get the coffee type ID based on the selected options
         const [matchingCoffeeType] = await db
             .select()
             .from(coffeeTypes)
             .where(
                 and(
-                    eq(coffeeTypes.name, coffeeType),
-                    eq(coffeeTypes.size, coffeeSize),
-                    eq(coffeeTypes.milkType, coffeeMilkType)
+                    eq(coffeeTypes.name, coffeeTypeValue),
+                    eq(coffeeTypes.size, coffeeSizeValue),
+                    eq(coffeeTypes.milkType, coffeeMilkTypeValue)
                 )
             );
 
@@ -45,9 +50,9 @@ export async function submitReport({
         if (!matchingCoffeeType) {
             // Coffee type not found, create a new one
             const [newCoffeeType] = await db.insert(coffeeTypes).values({
-                name: coffeeType,
-                size: coffeeSize,
-                milkType: coffeeMilkType,
+                name: coffeeTypeValue,
+                size: coffeeSizeValue,
+                milkType: coffeeMilkTypeValue,
             }).returning();
             
             coffeeTypeId = newCoffeeType.id;
