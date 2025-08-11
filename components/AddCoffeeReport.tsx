@@ -105,7 +105,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
     });
   }
 
-  const selectedCoffeeTypeString = `A ${selectedCoffeeType.coffeeSize}, ${selectedCoffeeType.coffeeMilkType}, ${selectedCoffeeType.coffeeType}`;
+  // const selectedCoffeeTypeString = `A ${selectedCoffeeType.coffeeSize}, ${selectedCoffeeType.coffeeMilkType}, ${selectedCoffeeType.coffeeType}`;
 
   return (
     <div>
@@ -114,7 +114,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
           <div className='flex flex-col gap-2'>
             {!editingCoffee ? (
               <>
-                <h2>{selectedCoffeeTypeString}</h2>
+                {/* <h2>{selectedCoffeeTypeString}</h2> */}
                 <Button
                   className='text-muted'
                   variant='ghost'

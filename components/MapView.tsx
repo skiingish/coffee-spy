@@ -110,8 +110,31 @@ const MapView: FC<MapViewProps> = ({
             </div>
           </Marker>
         ))}
-        <GlassContainer className='p-4 m-2'>
-          <h1 className='text-lg font-semibold'>Coffee Spotter</h1>
+        <GlassContainer className='p-3 sm:p-4 max-w-[92vw] sm:max-w-md m-auto'>
+          <div className='flex items-start justify-between gap-3'>
+            <div className='flex items-center gap-2'>
+              <span className='inline-block text-xl leading-none'>☕</span>
+              <div>
+                <h1 className='text-base sm:text-lg font-semibold'>Coffee Spy</h1>
+                <p className='text-[10px] sm:text-xs text-white/70 -mt-0.5'>Find great coffee near you (at a reasonable price)</p>
+              </div>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-2 py-1 text-[10px] sm:text-xs'>
+                <span className='hidden sm:inline'>📍</span>
+                {markers.length} venues
+              </span>
+            </div>
+          </div>
+
+          <div className='my-3 h-px bg-white/15' />
+
+          {/* <div className='mb-2 flex flex-wrap items-center gap-2'>
+            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedCoffeeType)}</span>
+            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedSize)}</span>
+            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedMilkType)}</span>
+          </div> */}
+
           <CoffeeSelector
             selectedCoffeeType={selectedCoffeeType}
             selectedMilkType={selectedMilkType}

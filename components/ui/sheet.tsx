@@ -69,7 +69,7 @@ const SheetContent = React.forwardRef<
         <Button 
           variant='ghost' 
           size='icon'
-          className='absolute right-4 top-4 text-card hover:bg-muted/50 focus:outline-none transition-colors'
+          className='absolute right-4 top-4 z-30 text-card hover:bg-muted/50 focus:outline-none transition-colors'
         >
           <X className='h-4 w-4' />
           <span className='sr-only'>Close</span>
