@@ -68,7 +68,7 @@ const MapView: FC<MapViewProps> = ({
   const initialViewState = {
     longitude: avg(markers.map(m => m.longitude).filter((lng): lng is number => lng !== null).map(Number)),
     latitude: avg(markers.map(m => m.latitude).filter((lat): lat is number => lat !== null).map(Number)),
-    zoom: 13,
+    zoom: 15,
   };
 
   return (
@@ -119,20 +119,18 @@ const MapView: FC<MapViewProps> = ({
                 <p className='text-[10px] sm:text-xs text-white/70 -mt-0.5'>Find great coffee near you (at a reasonable price)</p>
               </div>
             </div>
-            <div className='flex items-center gap-2'>
-              <span className='inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-2 py-1 text-[10px] sm:text-xs'>
-                <span className='hidden sm:inline'>📍</span>
-                {markers.length} venues
-              </span>
-            </div>
+    
           </div>
 
           <div className='my-3 h-px bg-white/15' />
 
           {/* <div className='mb-2 flex flex-wrap items-center gap-2'>
-            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedCoffeeType)}</span>
-            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedSize)}</span>
-            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>{String(selectedMilkType)}</span>
+            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>
+              {CoffeeSizes[selectedSize]} {isCoffeeTypeStandard(selectedCoffeeType) ? 'Standard' : 'Specialty'} Coffee
+            </span>
+            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>
+              {isMilkTypeStandard(selectedMilkType) ? 'Standard' : 'Alternative'} Milk
+            </span>
           </div> */}
 
           <CoffeeSelector

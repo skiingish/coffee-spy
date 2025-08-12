@@ -13,9 +13,9 @@ import {
   CoffeeMilkType,
   CoffeeSize,
   CoffeeType,
-  CoffeeMilkTypes,
   CoffeeSizes,
-  CoffeeTypes,
+  getCategorizedCoffeeTypes,
+  getCategorizedMilkTypes,
 } from '@/types/coffeeTypes';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,8 +45,11 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
     setIsExpanded(!isExpanded);
   };
 
-  // Format the summary text when collapsed
-  const summaryText = `${CoffeeSizes[selectedSize]}, ${CoffeeMilkTypes[selectedMilkType]}, ${CoffeeTypes[selectedCoffeeType]} `;
+  // Get categorized types for organized display
+  const { standard: standardCoffees, specialty: specialtyCoffees } = getCategorizedCoffeeTypes();
+  const { standard: standardMilks, alternative: alternativeMilks } = getCategorizedMilkTypes();
+
+  const summaryText = `A ${selectedSize}, ${selectedCoffeeType} with ${selectedMilkType} Milk`;
 
   return (
     <div className=''>
@@ -87,7 +90,7 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className='overflow-hidden'
           >
-            <div className='space-y-4 mt-4'>
+            <div className='space-y-4 mt-4 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='coffee-type'>Coffee Type</Label>
                 <Select
@@ -100,9 +103,16 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
                     <SelectValue placeholder='Select coffee type' />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.keys(CoffeeTypes).map((type) => (
+                    <div className='text-xs font-semibold text-muted-foreground px-2 py-1'>Standard</div>
+                    {Object.keys(standardCoffees).map((type) => (
                       <SelectItem key={type} value={type}>
-                        {CoffeeTypes[type as CoffeeType]}
+                        {standardCoffees[type as keyof typeof standardCoffees]}
+                      </SelectItem>
+                    ))}
+                    <div className='text-xs font-semibold text-muted-foreground px-2 py-1 mt-2'>Specialty</div>
+                    {Object.keys(specialtyCoffees).map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {specialtyCoffees[type as keyof typeof specialtyCoffees]}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -140,9 +150,16 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
                     <SelectValue placeholder='Select milk type' />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.keys(CoffeeMilkTypes).map((milk) => (
+                    <div className='text-xs font-semibold text-muted-foreground px-2 py-1'>Standard</div>
+                    {Object.keys(standardMilks).map((milk) => (
                       <SelectItem key={milk} value={milk}>
-                        {CoffeeMilkTypes[milk as CoffeeMilkType]}
+                        {standardMilks[milk as keyof typeof standardMilks]}
+                      </SelectItem>
+                    ))}
+                    <div className='text-xs font-semibold text-muted-foreground px-2 py-1 mt-2'>Alternative</div>
+                    {Object.keys(alternativeMilks).map((milk) => (
+                      <SelectItem key={milk} value={milk}>
+                        {alternativeMilks[milk as keyof typeof alternativeMilks]}
                       </SelectItem>
                     ))}
                   </SelectContent>

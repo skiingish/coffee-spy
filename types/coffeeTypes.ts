@@ -50,6 +50,80 @@ export enum ExtendCoffeeTypes {
 
 export type CoffeeType = keyof typeof CoffeeTypes;
 
+// Coffee type categories
+export const StandardCoffeeTypes = {
+  Latte: CoffeeTypes.Latte,
+  FlatWhite: CoffeeTypes.FlatWhite,
+  Cappuccino: CoffeeTypes.Cappuccino,
+} as const;
+
+export const SpecialtyCoffeeTypes = {
+  Espresso: CoffeeTypes.Espresso,
+  LongBlack: CoffeeTypes.LongBlack,
+  Mocha: CoffeeTypes.Mocha,
+  Magic: CoffeeTypes.Magic,
+  ColdBrew: CoffeeTypes.ColdBrew,
+  IcedLatte: CoffeeTypes.IcedLatte,
+} as const;
+
+export const ExtendedSpecialtyCoffeeTypes = {
+  Macchiato: ExtendCoffeeTypes.Macchiato,
+  Turkish: ExtendCoffeeTypes.Turkish,
+  Irish: ExtendCoffeeTypes.Irish,
+  Americano: ExtendCoffeeTypes.Americano,
+  Vienna: ExtendCoffeeTypes.Vienna,
+  Affogato: ExtendCoffeeTypes.Affogato,
+  Piccolo: ExtendCoffeeTypes.Piccolo,
+  Ristretto: ExtendCoffeeTypes.Ristretto,
+  Lungo: ExtendCoffeeTypes.Lungo,
+  IcedMocha: ExtendCoffeeTypes.IcedMocha,
+  IcedLongBlack: ExtendCoffeeTypes.IcedLongBlack,
+  IcedAmericano: ExtendCoffeeTypes.IcedAmericano,
+  IcedTea: ExtendCoffeeTypes.IcedTea,
+  ChaiLatte: ExtendCoffeeTypes.ChaiLatte,
+  HotChocolate: ExtendCoffeeTypes.HotChocolate,
+  MatchaLatte: ExtendCoffeeTypes.MatchaLatte,
+  GoldenLatte: ExtendCoffeeTypes.GoldenLatte,
+  TumericLatte: ExtendCoffeeTypes.TumericLatte,
+  BeetrootLatte: ExtendCoffeeTypes.BeetrootLatte,
+  ChaiTea: ExtendCoffeeTypes.ChaiTea,
+  EnglishBreakfast: ExtendCoffeeTypes.EnglishBreakfast,
+  EarlGrey: ExtendCoffeeTypes.EarlGrey,
+  GreenTea: ExtendCoffeeTypes.GreenTea,
+  PeppermintTea: ExtendCoffeeTypes.PeppermintTea,
+  ChamomileTea: ExtendCoffeeTypes.ChamomileTea,
+  RooibosTea: ExtendCoffeeTypes.RooibosTea,
+  OolongTea: ExtendCoffeeTypes.OolongTea,
+  MatchaTea: ExtendCoffeeTypes.MatchaTea,
+  HerbalTea: ExtendCoffeeTypes.HerbalTea,
+  FruitTea: ExtendCoffeeTypes.FruitTea,
+  WhiteTea: ExtendCoffeeTypes.WhiteTea,
+  BlackTea: ExtendCoffeeTypes.BlackTea,
+  Coffee: ExtendCoffeeTypes.Coffee,
+  Tea: ExtendCoffeeTypes.Tea,
+  Other: ExtendCoffeeTypes.Other,
+} as const;
+
+// Helper functions for categorized coffee types
+export const getCategorizedCoffeeTypes = () => ({
+  standard: StandardCoffeeTypes,
+  specialty: SpecialtyCoffeeTypes,
+});
+
+export const getAllCategorizedCoffeeTypes = () => ({
+  standard: StandardCoffeeTypes,
+  specialty: { ...SpecialtyCoffeeTypes, ...ExtendedSpecialtyCoffeeTypes },
+});
+
+export const isCoffeeTypeStandard = (coffeeType: CoffeeType): boolean => {
+  return Object.keys(StandardCoffeeTypes).includes(coffeeType);
+};
+
+export const isCoffeeTypeSpecialty = (coffeeType: CoffeeType): boolean => {
+  return Object.keys(SpecialtyCoffeeTypes).includes(coffeeType) || 
+         Object.keys(ExtendedSpecialtyCoffeeTypes).includes(coffeeType);
+};
+
 export enum CoffeeSizes {
   Small = 'small',
   Regular = 'regular',
@@ -87,3 +161,45 @@ export enum ExtendCoffeeMilkTypes {
 }
 
 export type CoffeeMilkType = keyof typeof CoffeeMilkTypes;
+
+// Milk type categories
+export const StandardMilkTypes = {
+  FullCream: CoffeeMilkTypes.FullCream,
+  Skim: CoffeeMilkTypes.Skim,
+} as const;
+
+export const AlternativeMilkTypes = {
+  Soy: CoffeeMilkTypes.Soy,
+  Almond: CoffeeMilkTypes.Almond,
+  Oat: CoffeeMilkTypes.Oat,
+} as const;
+
+export const ExtendedAlternativeMilkTypes = {
+  Coconut: ExtendCoffeeMilkTypes.Coconut,
+  Macadamia: ExtendCoffeeMilkTypes.Macadamia,
+  Rice: ExtendCoffeeMilkTypes.Rice,
+  Hemp: ExtendCoffeeMilkTypes.Hemp,
+  Cashew: ExtendCoffeeMilkTypes.Cashew,
+  Pea: ExtendCoffeeMilkTypes.Pea,
+  LactoseFree: ExtendCoffeeMilkTypes.LactoseFree,
+  Other: ExtendCoffeeMilkTypes.Other,
+} as const;
+
+// Helper functions for categorized milk types
+export const getCategorizedMilkTypes = () => ({
+  standard: StandardMilkTypes,
+  alternative: AlternativeMilkTypes,
+});
+
+export const getAllCategorizedMilkTypes = () => ({
+  standard: StandardMilkTypes,
+  alternative: { ...AlternativeMilkTypes, ...ExtendedAlternativeMilkTypes },
+});
+
+export const isMilkTypeStandard = (milkType: CoffeeMilkType): boolean => {
+  return Object.keys(StandardMilkTypes).includes(milkType);
+};
+
+export const isMilkTypeAlternative = (milkType: CoffeeMilkType): boolean => {
+  return Object.keys(AlternativeMilkTypes).includes(milkType);
+};

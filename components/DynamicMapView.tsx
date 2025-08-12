@@ -2,8 +2,8 @@
 
 import { FC, useEffect, useState, useCallback } from 'react';
 import { CoffeeTypeObject, MarkerData } from '@/types/types';
-import { CoffeeMilkType, CoffeeSize, CoffeeType, CoffeeMilkTypes, CoffeeSizes, CoffeeTypes } from '@/types/coffeeTypes';
-import { getPrices } from '@/actions/prices';
+import { CoffeeMilkType, CoffeeSize, CoffeeType, CoffeeSizes } from '@/types/coffeeTypes';
+import { getPricesGrouped } from '@/actions/prices';
 import MapView from './MapView';
 
 interface Venue {
@@ -31,17 +31,19 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
   const fetchPricesAndUpdateMarkers = useCallback(async () => {
     setLoading(true);
     try {
-      // Convert enum keys to their string values
-      const coffeeTypeValue = CoffeeTypes[selectedCoffeeType];
+      // Use size value directly (no need to convert enum values anymore)
       const sizeValue = CoffeeSizes[selectedSize];
-      const milkTypeValue = CoffeeMilkTypes[selectedMilkType];
       
-      console.log('Fetching prices for:', { coffeeTypeValue, sizeValue, milkTypeValue });
+      console.log('Fetching grouped prices for:', { 
+        coffeeType: selectedCoffeeType, 
+        size: sizeValue, 
+        milkType: selectedMilkType 
+      });
       
-      const { prices, error } = await getPrices(coffeeTypeValue, sizeValue, milkTypeValue);
+      const { prices, error } = await getPricesGrouped(selectedCoffeeType, sizeValue, selectedMilkType);
       
       if (error || !prices) {
-        console.error('Error fetching prices:', error);
+        console.error('Error fetching grouped prices:', error);
         // Set markers with no price/rating data if there's an error
         const fallbackMarkers = venues.map((venue: Venue) => ({
           venue_name: venue.name,
@@ -77,7 +79,7 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
 
       setMarkerData(newMarkerData);
     } catch (error) {
-      console.error('Error fetching prices:', error);
+      console.error('Error fetching grouped prices:', error);
     } finally {
       setLoading(false);
     }
