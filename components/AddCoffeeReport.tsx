@@ -1,5 +1,5 @@
 'use client';
-import { FC, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,6 +32,8 @@ import {
 } from './ui/select';
 import { submitReport } from '@/actions/report';
 import { toast } from 'sonner';
+import { getBlockedUntil, makeGroupKey, msToCompact, recordSubmission } from '@/utils/reviewGate';
+import { isCoffeeTypeStandard, isMilkTypeStandard } from '@/types/coffeeTypes';
 
 interface AddCoffeeReportProps {
   venueId?: number;
@@ -65,6 +67,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   onOpenChange,
 }) => {
   const [editingCoffee, setEditingCoffee] = useState(false);
+  const [blockedUntil, setBlockedUntil] = useState<number | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,7 +81,33 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
     },
   });
 
+  // Derive the current key for anti-spam gating
+  const currentKey = useMemo(() => {
+    const ct = (form.getValues('coffeeType') || selectedCoffeeType.coffeeType) as string;
+    const sz = (form.getValues('coffeeSize') || selectedCoffeeType.coffeeSize) as string;
+    const mk = (form.getValues('coffeeMilkType') || selectedCoffeeType.coffeeMilkType) as string;
+  const coffeeGroup = isCoffeeTypeStandard(ct as CoffeeType) ? 'standard' : 'specialty';
+  const milkGroup = isMilkTypeStandard(mk as CoffeeMilkType) ? 'standard' : 'alternative';
+    return makeGroupKey(coffeeGroup, milkGroup, sz, { includeVenue: true, venueId });
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [venueId, form.watch('coffeeType'), form.watch('coffeeMilkType'), form.watch('coffeeSize')]);
+
+  // Check block status on mount and whenever the selection changes
+  useEffect(() => {
+    const until = getBlockedUntil(currentKey);
+    setBlockedUntil(until);
+  }, [currentKey]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // Final guard: if blocked, avoid submitting
+    const until = getBlockedUntil(currentKey);
+    if (until && until > Date.now()) {
+      toast.warning(`You've recently submitted this coffee. Try again in ${msToCompact(until - Date.now())}.`);
+      setBlockedUntil(until);
+      return;
+    }
+
     console.log('Submitting report:', values);
     // Call the server action with the form values
     submitReport({
@@ -96,6 +125,10 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
         }
 
         toast('Your coffee report has been submitted.');
+
+        // Record this submission locally to prevent spam for TTL
+        recordSubmission(currentKey);
+        setBlockedUntil(getBlockedUntil(currentKey));
 
         form.reset();
       } else {
@@ -255,7 +288,16 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
             )}
           />
 
-          <Button type='submit'>Submit Brew</Button>
+          <div className='flex items-center justify-between gap-3'>
+            <Button type='submit' disabled={!!blockedUntil && blockedUntil > Date.now()}>
+              Submit Brew
+            </Button>
+            {blockedUntil && blockedUntil > Date.now() && (
+              <span className='text-xs text-muted-foreground'>
+                You can submit again in {msToCompact(blockedUntil - Date.now())}
+              </span>
+            )}
+          </div>
         </form>
       </Form>
     </div>

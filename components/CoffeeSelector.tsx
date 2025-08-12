@@ -14,6 +14,8 @@ import {
   CoffeeSize,
   CoffeeType,
   CoffeeSizes,
+  CoffeeTypes,
+  CoffeeMilkTypes,
   getCategorizedCoffeeTypes,
   getCategorizedMilkTypes,
 } from '@/types/coffeeTypes';
@@ -49,7 +51,10 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
   const { standard: standardCoffees, specialty: specialtyCoffees } = getCategorizedCoffeeTypes();
   const { standard: standardMilks, alternative: alternativeMilks } = getCategorizedMilkTypes();
 
-  const summaryText = `A ${selectedSize}, ${selectedCoffeeType} with ${selectedMilkType} Milk`;
+  // Summary shows the exact selection with human-friendly labels
+  const coffeeLabel = CoffeeTypes[selectedCoffeeType as keyof typeof CoffeeTypes] || selectedCoffeeType;
+  const milkLabel = CoffeeMilkTypes[selectedMilkType as keyof typeof CoffeeMilkTypes] || selectedMilkType;
+  const summaryText = `${CoffeeSizes[selectedSize]}, ${milkLabel}, ${coffeeLabel}`;
 
   return (
     <div className=''>
