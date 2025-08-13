@@ -7,7 +7,7 @@ export default async function Page() {
     <ul>
       {allVenues.map((post) => (
         <li key={post.id}>
-          {post.name} - {post.created_at.toString()}
+          {post.name} - {post.created_at ? post.created_at.toISOString() : '—'}
         </li>
       ))}
     </ul>
