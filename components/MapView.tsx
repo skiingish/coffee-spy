@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import Map, { Marker } from 'react-map-gl/mapbox';
+import Map, { Marker, Source } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
@@ -9,6 +9,7 @@ import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { Coffee } from 'lucide-react';
+import AdSenseFooter from '@/components/ads/AdSenseFooter';
 
 interface MapViewProps {
   markers: MarkerData[];
@@ -77,8 +78,16 @@ const MapView: FC<MapViewProps> = ({
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
         initialViewState={initialViewState}
         style={dimensions}
-        mapStyle='mapbox://styles/petherem/cl2hdvc6r003114n2jgmmdr24'
+        terrain={{ source: 'mapbox-dem', exaggeration: 1.5 }}
+        mapStyle=''
       >
+        <Source
+          id="mapbox-dem"
+          type="raster-dem"
+          url="mapbox://mapbox.mapbox-terrain-dem-v1"
+          tileSize={128}
+          maxzoom={14}
+        />
         {markers.map((marker, index) => (
           <Marker
             key={index}
@@ -142,6 +151,12 @@ const MapView: FC<MapViewProps> = ({
             onSizeChange={onSizeChange}
           />
         </GlassContainer>
+        {/* Footer GlassContainer for AdSense */}
+        <div className='absolute inset-x-0 bottom-4 flex justify-center pointer-events-none'>
+          <GlassContainer className='pointer-events-auto p-2 sm:p-3 max-w-[92vw] sm:max-w-lg'>
+            <AdSenseFooter />
+          </GlassContainer>
+        </div>
         <MarkerDrawer
           isOpen={isDrawerOpen}
           onOpenChange={setIsDrawerOpen}
