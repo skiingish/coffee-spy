@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import Map, { Marker, Source } from 'react-map-gl/mapbox';
+import Map, { Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerData } from '@/types/types';
 import { getRatingColor } from '@/utils/ratingColors';
