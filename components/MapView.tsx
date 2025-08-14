@@ -78,15 +78,8 @@ const MapView: FC<MapViewProps> = ({
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
         initialViewState={initialViewState}
         style={dimensions}
-        mapStyle=''
+        mapStyle='mapbox://styles/petherem/cl2hdvc6r003114n2jgmmdr24'
       >
-        <Source
-          id="mapbox-dem"
-          type="raster-dem"
-          url="mapbox://mapbox.mapbox-terrain-dem-v1"
-          tileSize={128}
-          maxzoom={14}
-        />
         {markers.map((marker, index) => (
           <Marker
             key={index}
