@@ -29,6 +29,11 @@ export default function RootLayout({
     <html lang='en'>
       <head>
         <meta name="google-adsense-account" content="ca-pub-9438181953083320"></meta>
+  {/* Preconnects to speed up Mapbox asset fetching and reduce white flash */}
+  <link rel="preconnect" href="https://api.mapbox.com" crossOrigin="anonymous" />
+  <link rel="preconnect" href="https://events.mapbox.com" crossOrigin="anonymous" />
+  <link rel="dns-prefetch" href="https://api.mapbox.com" />
+  <link rel="dns-prefetch" href="https://events.mapbox.com" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

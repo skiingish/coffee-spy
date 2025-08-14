@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, useEffect, useState, useCallback } from 'react';
+import CoffeeLoadingScreen from '@/components/CoffeeLoader';
 import { CoffeeTypeObject, MarkerData } from '@/types/types';
 import { CoffeeMilkType, CoffeeSize, CoffeeType, CoffeeSizes } from '@/types/coffeeTypes';
-import { getPricesGrouped } from '@/actions/prices';
 import MapView from './MapView';
 
 interface Venue {
@@ -19,6 +19,15 @@ interface Venue {
 interface DynamicMapViewProps {
   venues: Venue[];
   coffeeTypes: CoffeeTypeObject[];
+}
+
+interface GroupedPriceResult {
+  venue_id: number;
+  price: number | null;
+  rating: number | null;
+  latitude: string | null;
+  longitude: string | null;
+  created_at: string | null;
 }
 
 export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes }) => {
@@ -40,7 +49,14 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
         milkType: selectedMilkType 
       });
       
-      const { prices, error } = await getPricesGrouped(selectedCoffeeType, sizeValue, selectedMilkType);
+      const search = new URLSearchParams({
+        coffeeType: selectedCoffeeType,
+        size: sizeValue,
+        milkType: selectedMilkType,
+      });
+      const res = await fetch(`/api/prices/grouped?${search.toString()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch grouped prices');
+  const { prices, error }: { prices: GroupedPriceResult[]; error: string | null } = await res.json();
       
       if (error || !prices) {
         console.error('Error fetching grouped prices:', error);
@@ -59,12 +75,11 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
         return;
       }
 
-      const priceMap = new Map(
-        prices.map((price) => [price.venue_id, price.price])
+      const priceMap = new Map<number, number | null>(
+        prices.map((p) => [p.venue_id, p.price])
       );
-      
-      const ratingMap = new Map(
-        prices.map((price) => [price.venue_id, price.rating])
+      const ratingMap = new Map<number, number | null>(
+        prices.map((p) => [p.venue_id, p.rating])
       );
 
       const newMarkerData = venues.map((venue: Venue) => ({
@@ -102,7 +117,7 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
   };
 
   if (loading && markerData.length === 0) {
-    return <div>Loading map data...</div>;
+    return <CoffeeLoadingScreen />;
   }
 
   return (

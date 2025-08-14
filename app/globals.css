@@ -81,6 +81,14 @@
   }
 }
 
+/* Mapbox flash mitigation */
+.mapboxgl-map, .mapboxgl-canvas {
+  background: #0b0b0b !important;
+  transition: opacity 300ms ease;
+}
+.mapboxgl-canvas { opacity: 0; }
+.mapboxgl-map .mapboxgl-canvas { opacity: 1; }
+
 @layer base {
   * {
     @apply border-border;
