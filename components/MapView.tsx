@@ -78,7 +78,6 @@ const MapView: FC<MapViewProps> = ({
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
         initialViewState={initialViewState}
         style={dimensions}
-        terrain={{ source: 'mapbox-dem', exaggeration: 1.5 }}
         mapStyle=''
       >
         <Source
