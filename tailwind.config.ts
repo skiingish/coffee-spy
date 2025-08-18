@@ -12,6 +12,10 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+			coffee: {
+				DEFAULT: 'hsl(var(--coffee))',
+				foreground: 'hsl(var(--coffee-foreground))'
+			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

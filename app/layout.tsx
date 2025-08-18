@@ -26,9 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+  <html lang='en' className='dark'>
       <head>
         <meta name="google-adsense-account" content="ca-pub-9438181953083320"></meta>
+    <meta name="theme-color" content="#0b0b0b" />
   {/* Preconnects to speed up Mapbox asset fetching and reduce white flash */}
   <link rel="preconnect" href="https://api.mapbox.com" crossOrigin="anonymous" />
   <link rel="preconnect" href="https://events.mapbox.com" crossOrigin="anonymous" />
@@ -36,7 +37,8 @@ export default function RootLayout({
   <link rel="dns-prefetch" href="https://events.mapbox.com" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
+    style={{ backgroundColor: '#0b0b0b' }}
       >
         {children}
         <Analytics />
