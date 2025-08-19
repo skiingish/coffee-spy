@@ -43,12 +43,13 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background',
+        // Glassmorphic drawer surface
+        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[18px] border border-white/25 bg-black/40 backdrop-blur-[6px] shadow-[0_4px_30px_rgba(0,0,0,0.25)] supports-[backdrop-filter]:bg-black/35',
         className
       )}
       {...props}
     >
-      <div className='mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted' />
+  <div className='mx-auto mt-4 h-1.5 w-[100px] rounded-full bg-white/30' />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

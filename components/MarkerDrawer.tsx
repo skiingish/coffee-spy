@@ -175,15 +175,10 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="
-          flex h-full w-[400px] max-w-[92vw] flex-col
-          bg-gradient-to-b from-white/10 to-white/[0.04]
-          backdrop-blur-xl border-l border-white/20
-          text-white
-        "
+        className="flex h-full w-[400px] max-w-[92vw] flex-col text-white/90"
       >
         {/* Sticky header */}
-  <SheetHeader className="sticky top-0  px-4 py-3 border-b border-white/15 text-left">
+  <SheetHeader className="sticky top-0 px-4 py-3 border-b border-white/10 text-left ">
           <div className="flex items-start justify-between gap-3">
             <div>
               <SheetTitle className="text-white flex items-center gap-2">
@@ -339,15 +334,6 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
             <div className="mt-4 rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
               <div className="text-xs uppercase tracking-wide text-white/60 mb-2">Latest report</div>
               <div className="flex items-start justify-between gap-3">
-                <div className="text-sm text-white/90">
-                  {mostRecentReport?.comments ? (
-                    <>
-                      “{String(mostRecentReport.comments).slice(0, 160)}{String(mostRecentReport.comments).length > 160 ? '…' : ''}”
-                    </>
-                  ) : (
-                    <span className="text-white/60">No comments</span>
-                  )}
-                </div>
                 <div className="text-right text-xs text-white/60 whitespace-nowrap">
                   {timeAgo(toDate(mostRecentReport?.created_at) || null)}
                 </div>
@@ -388,7 +374,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
 
         {/* Sticky footer: Add report */}
         {marker?.venue_id != null && (
-          <div className="sticky bottom-0 z-10 border-t border-white/15  backdrop-blur-lg px-4 py-3">
+          <div className="sticky bottom-0 z-10 border-t border-white/10 bg-transparent px-4 py-3">
             <div className="rounded-lg bg-white/5 ring-1 ring-white/10 p-3">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-sm font-semibold">Add a report</h2>
