@@ -7,7 +7,10 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AddCoffeeReport from './AddCoffeeReport';
+import PriceTrendChart from './PriceTrendChart';
+import RatingsTrendChart from './RatingsTrendChart';
 import { Rating } from './ui/rating';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { getReportsByVenueId } from '@/actions/report';
@@ -162,11 +165,37 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
       }))
       .filter((x) => x.price != null && x.date > 0) as { price: number; date: number }[];
     const sorted = withDate.sort((a, b) => a.date - b.date).slice(-8);
+    if (!sorted.length) return null;
     const prices = sorted.map((x) => x.price);
-    if (!prices.length) return null;
     const min = Math.min(...prices);
     const max = Math.max(...prices);
-    return { prices, min, max };
+    return { data: sorted, prices, min, max };
+  }, [reports]);
+
+  // Transform price data for chart
+  const chartData = useMemo(() => {
+    if (!recentPrices) return [];
+    return recentPrices.data.map((item) => ({
+      price: item.price,
+      date: item.date,
+      month: new Date(item.date).toLocaleDateString('en-US', { month: 'short' }),
+    }));
+  }, [recentPrices]);
+
+  // Transform rating data for chart
+  const ratingsChartData = useMemo(() => {
+    const withDate = reports
+      .map((r) => ({
+        rating: typeof r.rating === 'number' ? r.rating : null,
+        date: toDate(r.created_at)?.getTime() ?? 0,
+      }))
+      .filter((x) => x.rating != null && x.date > 0) as { rating: number; date: number }[];
+    const sorted = withDate.sort((a, b) => a.date - b.date).slice(-8);
+    return sorted.map((item) => ({
+      rating: item.rating,
+      date: item.date,
+      month: new Date(item.date).toLocaleDateString('en-US', { month: 'short' }),
+    }));
   }, [reports]);
 
   const coffeeSummary = `${selectedCoffeeType.coffeeType} • ${selectedCoffeeType.coffeeSize} • ${selectedCoffeeType.coffeeMilkType}`;
@@ -202,9 +231,9 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
-          {/* Rating summary */}
+          {/* Rating and Trend Tabs */}
           <div className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="text-xs uppercase tracking-wide text-white/60">
                   Average rating
@@ -232,43 +261,58 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
               </div>
             </div>
 
-            {/* Rating breakdown */}
-            <div className="mt-4">
-              {loading ? (
-                <div className="space-y-2">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-3 w-full rounded bg-white/10 overflow-hidden">
-                      <div className="h-full w-1/2 bg-white/30 animate-pulse" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {[5, 4, 3, 2, 1].map((star) => {
-                    const count = ratingCounts[star - 1] || 0;
-                    const pct = reportCount ? Math.round((count / reportCount) * 100) : 0;
-                    return (
-                      <div key={star} className="flex items-center gap-3">
-                        <div className="w-8 text-xs text-white/70">{star}★</div>
-                        <div className="flex-1 h-2 rounded bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full transition-all duration-500"
-                            style={{ width: `${pct}%`, backgroundColor: getRatingColor(star) }}
-                          />
-                        </div>
-                        <div className="w-14 text-right text-xs text-white/70">{pct}% ({count})</div>
+            <Tabs defaultValue="trend" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/10">
+                <TabsTrigger value="trend" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20">
+                  Trend
+                </TabsTrigger>
+                <TabsTrigger value="ratings" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20">
+                  Ratings
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="trend" className="mt-4">
+                <RatingsTrendChart data={ratingsChartData} />
+              </TabsContent>
+              
+              <TabsContent value="ratings" className="mt-4">
+                {/* Rating breakdown */}
+                {loading ? (
+                  <div className="space-y-2">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-3 w-full rounded bg-white/10 overflow-hidden">
+                        <div className="h-full w-1/2 bg-white/30 animate-pulse" />
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {!loading && mostCommonRating && (
-              <div className="mt-3 text-xs text-white/70">
-                Most common rating: <span className="font-medium text-white">{mostCommonRating}★</span>
-              </div>
-            )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const count = ratingCounts[star - 1] || 0;
+                      const pct = reportCount ? Math.round((count / reportCount) * 100) : 0;
+                      return (
+                        <div key={star} className="flex items-center gap-3">
+                          <div className="w-8 text-xs text-white/70">{star}★</div>
+                          <div className="flex-1 h-2 rounded bg-white/10 overflow-hidden">
+                            <div
+                              className="h-full transition-all duration-500"
+                              style={{ width: `${pct}%`, backgroundColor: getRatingColor(star) }}
+                            />
+                          </div>
+                          <div className="w-14 text-right text-xs text-white/70">{pct}% ({count})</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {!loading && mostCommonRating && (
+                  <div className="mt-3 text-xs text-white/70">
+                    Most common rating: <span className="font-medium text-white">{mostCommonRating}★</span>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Divider */}
@@ -305,28 +349,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
             </div>
 
             {/* Mini price trend */}
-            <div className="mt-4 h-24 rounded-md bg-white/5 border border-white/10 flex items-end gap-1 p-2">
-              {recentPrices ? (
-                recentPrices.prices.map((p, i) => {
-                  const { min, max } = recentPrices;
-                  const range = Math.max(0.01, max - min);
-                  const norm = (p - min) / range; // 0..1
-                  const h = 16 + Math.round(norm * 56); // 16..72px
-                  return (
-                    <div
-                      key={i}
-                      className="flex-1 bg-emerald-400/70 rounded-sm"
-                      style={{ height: `${h}px` }}
-                      title={`$${p.toFixed(2)}`}
-                    />
-                  );
-                })
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-white/60 text-xs">
-                  No price trend yet
-                </div>
-              )}
-            </div>
+            <PriceTrendChart data={chartData} />
           </div>
 
           {/* Recent comment */}
