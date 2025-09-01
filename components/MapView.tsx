@@ -8,6 +8,7 @@ import { getRatingColor } from '@/utils/ratingColors';
 import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
+import HelpMenu from './HelpMenu';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { Coffee } from 'lucide-react';
 import AdSenseFooter from '@/components/ads/AdSenseFooter';
@@ -170,6 +171,11 @@ const MapView: FC<MapViewProps> = ({
           <GlassContainer className='pointer-events-auto p-2 sm:p-3 max-w-[92vw] sm:max-w-lg'>
             <AdSenseFooter />
           </GlassContainer>
+        </div>
+        
+        {/* Help Menu in bottom left corner */}
+        <div className='absolute bottom-4 left-4 pointer-events-none'>
+          <HelpMenu className='pointer-events-auto' />
         </div>
         <MarkerDrawer
           isOpen={isDrawerOpen}
