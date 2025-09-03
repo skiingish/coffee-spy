@@ -30,6 +30,7 @@ export default function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-9438181953083320"></meta>
     <meta name="theme-color" content="#0b0b0b" />
+    <meta name="apple-mobile-web-app-title" content="Coffee Spy" />
   {/* Preconnects to speed up Mapbox asset fetching and reduce white flash */}
   <link rel="preconnect" href="https://api.mapbox.com" crossOrigin="anonymous" />
   <link rel="preconnect" href="https://events.mapbox.com" crossOrigin="anonymous" />

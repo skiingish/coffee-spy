@@ -9,9 +9,9 @@ import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
 import HelpMenu from './HelpMenu';
+import InstallPrompt from './InstallPrompt';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { Coffee } from 'lucide-react';
-import AdSenseFooter from '@/components/ads/AdSenseFooter';
 
 interface MapViewProps {
   markers: MarkerData[];
@@ -166,10 +166,10 @@ const MapView: FC<MapViewProps> = ({
             onSizeChange={onSizeChange}
           />
         </GlassContainer>
-        {/* Footer GlassContainer for AdSense */}
+        {/* Footer GlassContainer for Install Prompt */}
         <div className='absolute inset-x-0 bottom-4 flex justify-center pointer-events-none'>
           <GlassContainer className='pointer-events-auto p-2 sm:p-3 max-w-[92vw] sm:max-w-lg'>
-            <AdSenseFooter />
+            <InstallPrompt />
           </GlassContainer>
         </div>
         
@@ -192,7 +192,7 @@ const MapView: FC<MapViewProps> = ({
       {/* Unified overlay loader */}
       {!mapLoaded && (
         <div className='absolute inset-0 z-[60]'>
-          <CoffeeLoadingScreen autoFade={false} message={['Checking ','Checking milk expiry','Roasting beans'][phase]} />
+          <CoffeeLoadingScreen autoFade={false} message={['Checking toilet paper supply','Checking milk expiry','Roasting beans'][phase]} />
         </div>
       )}
     </div>
