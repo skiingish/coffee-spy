@@ -13,6 +13,7 @@ import InstallPrompt from './InstallPrompt';
 import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
 import { Coffee } from 'lucide-react';
 
+
 interface MapViewProps {
   markers: MarkerData[];
   selectedCoffeeType: CoffeeType;
