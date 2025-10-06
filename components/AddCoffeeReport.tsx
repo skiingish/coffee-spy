@@ -35,13 +35,10 @@ import { toast } from 'sonner';
 import { getBlockedUntil, makeGroupKey, msToCompact, recordSubmission } from '@/utils/reviewGate';
 import { isCoffeeTypeStandard, isMilkTypeStandard } from '@/types/coffeeTypes';
 
+import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
+
 interface AddCoffeeReportProps {
   venueId?: number;
-  selectedCoffeeType: {
-    coffeeType: CoffeeType;
-    coffeeSize: CoffeeSize;
-    coffeeMilkType: CoffeeMilkType;
-  };
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -63,9 +60,9 @@ const formSchema = z.object({
 
 const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   venueId = 1,
-  selectedCoffeeType,
   onOpenChange,
 }) => {
+  const { coffeeType, coffeeSize, coffeeMilkType } = useCoffeeSelection();
   const [editingCoffee, setEditingCoffee] = useState(false);
   const [blockedUntil, setBlockedUntil] = useState<number | null>(null);
 
@@ -73,9 +70,9 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       venueId: venueId,
-      coffeeSize: selectedCoffeeType.coffeeSize,
-      coffeeMilkType: selectedCoffeeType.coffeeMilkType,
-      coffeeType: selectedCoffeeType.coffeeType,
+  coffeeSize: coffeeSize,
+  coffeeMilkType: coffeeMilkType,
+  coffeeType: coffeeType,
       price: undefined,
       rating: undefined,
     },
@@ -83,9 +80,9 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
 
   // Derive the current key for anti-spam gating
   const currentKey = useMemo(() => {
-    const ct = (form.getValues('coffeeType') || selectedCoffeeType.coffeeType) as string;
-    const sz = (form.getValues('coffeeSize') || selectedCoffeeType.coffeeSize) as string;
-    const mk = (form.getValues('coffeeMilkType') || selectedCoffeeType.coffeeMilkType) as string;
+  const ct = (form.getValues('coffeeType') || coffeeType) as string;
+  const sz = (form.getValues('coffeeSize') || coffeeSize) as string;
+  const mk = (form.getValues('coffeeMilkType') || coffeeMilkType) as string;
   const coffeeGroup = isCoffeeTypeStandard(ct as CoffeeType) ? 'standard' : 'specialty';
   const milkGroup = isMilkTypeStandard(mk as CoffeeMilkType) ? 'standard' : 'alternative';
     return makeGroupKey(coffeeGroup, milkGroup, sz, { includeVenue: true, venueId });
@@ -108,7 +105,6 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
       return;
     }
 
-    console.log('Submitting report:', values);
     // Call the server action with the form values
     submitReport({
       venueId: values.venueId,
@@ -234,6 +230,15 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
                     </FormItem>
                   )}
                 />
+                <Button
+                  className='text-muted'
+                  variant='default'
+                  size='sm'
+                  type='button'
+                  onClick={() => setEditingCoffee(false)}
+                >
+                  Select coffee
+                </Button>
               </div>
             )}
           </div>

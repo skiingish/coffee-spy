@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
+import { VenueNameVisibilityProvider } from '@/hooks/VenueNameVisibilityProvider';
+import { CoffeeSelectionProvider } from '@/hooks/CoffeeSelectionProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -41,7 +43,11 @@ export default function RootLayout({
     className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
     style={{ backgroundColor: '#0b0b0b' }}
       >
-        {children}
+        <CoffeeSelectionProvider>
+          <VenueNameVisibilityProvider>
+            {children}
+          </VenueNameVisibilityProvider>
+        </CoffeeSelectionProvider>
         <Analytics />
         <Toaster />
         {/* Google AdSense script; loads only if keys are present */}

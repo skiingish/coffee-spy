@@ -24,23 +24,10 @@ import { Button } from '@/components/ui/button';
 import * as motion from 'motion/react-client';
 import { AnimatePresence } from 'motion/react';
 
-interface CoffeeSelectorProps {
-  selectedCoffeeType: CoffeeType;
-  selectedSize: CoffeeSize;
-  selectedMilkType: CoffeeMilkType;
-  onCoffeeTypeChange: (value: CoffeeType) => void;
-  onSizeChange: (value: CoffeeSize) => void;
-  onMilkTypeChange: (value: CoffeeMilkType) => void;
-}
+import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 
-export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
-  selectedCoffeeType,
-  selectedSize,
-  selectedMilkType,
-  onCoffeeTypeChange,
-  onSizeChange,
-  onMilkTypeChange,
-}) => {
+export const CoffeeSelector: FC = () => {
+  const { coffeeType: selectedCoffeeType, coffeeSize: selectedSize, coffeeMilkType: selectedMilkType, setCoffeeType, setCoffeeSize, setCoffeeMilkType } = useCoffeeSelection();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = () => {
@@ -100,9 +87,7 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
                 <Label htmlFor='coffee-type'>Coffee Type</Label>
                 <Select
                   value={selectedCoffeeType}
-                  onValueChange={(value) =>
-                    onCoffeeTypeChange(value as CoffeeType)
-                  }
+                  onValueChange={(value) => setCoffeeType(value as CoffeeType)}
                 >
                   <SelectTrigger id='coffee-type'>
                     <SelectValue placeholder='Select coffee type' />
@@ -128,7 +113,7 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
                 <Label htmlFor='coffee-size'>Size</Label>
                 <Select
                   value={selectedSize}
-                  onValueChange={(value) => onSizeChange(value as CoffeeSize)}
+                  onValueChange={(value) => setCoffeeSize(value as CoffeeSize)}
                 >
                   <SelectTrigger id='coffee-size'>
                     <SelectValue placeholder='Select size' />
@@ -147,9 +132,7 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({
                 <Label htmlFor='milk-type'>Milk Type</Label>
                 <Select
                   value={selectedMilkType}
-                  onValueChange={(value) =>
-                    onMilkTypeChange(value as CoffeeMilkType)
-                  }
+                  onValueChange={(value) => setCoffeeMilkType(value as CoffeeMilkType)}
                 >
                   <SelectTrigger id='milk-type'>
                     <SelectValue placeholder='Select milk type' />

@@ -3,7 +3,8 @@
 import { FC, useEffect, useState, useCallback } from 'react';
 import CoffeeLoadingScreen from '@/components/CoffeeLoader';
 import { CoffeeTypeObject, MarkerData } from '@/types/types';
-import { CoffeeMilkType, CoffeeSize, CoffeeType, CoffeeSizes } from '@/types/coffeeTypes';
+import { CoffeeSizes } from '@/types/coffeeTypes';
+import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 import MapView from './MapView';
 
 interface Venue {
@@ -31,9 +32,7 @@ interface GroupedPriceResult {
 }
 
 export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes }) => {
-  const [selectedCoffeeType, setSelectedCoffeeType] = useState<CoffeeType>('Latte');
-  const [selectedSize, setSelectedSize] = useState<CoffeeSize>('Regular');
-  const [selectedMilkType, setSelectedMilkType] = useState<CoffeeMilkType>('FullCream');
+  const { coffeeType: selectedCoffeeType, coffeeSize: selectedSize, coffeeMilkType: selectedMilkType } = useCoffeeSelection();
   const [markerData, setMarkerData] = useState<MarkerData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -104,17 +103,6 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
     fetchPricesAndUpdateMarkers();
   }, [fetchPricesAndUpdateMarkers]);
 
-  const handleCoffeeTypeChange = (value: CoffeeType) => {
-    setSelectedCoffeeType(value);
-  };
-
-  const handleSizeChange = (value: CoffeeSize) => {
-    setSelectedSize(value);
-  };
-
-  const handleMilkTypeChange = (value: CoffeeMilkType) => {
-    setSelectedMilkType(value);
-  };
 
   if (loading && markerData.length === 0) {
     return <CoffeeLoadingScreen />;
@@ -123,12 +111,6 @@ export const DynamicMapView: FC<DynamicMapViewProps> = ({ venues, coffeeTypes })
   return (
     <MapView 
       markers={markerData} 
-      selectedCoffeeType={selectedCoffeeType}
-      selectedSize={selectedSize}
-      selectedMilkType={selectedMilkType}
-      onCoffeeTypeChange={handleCoffeeTypeChange}
-      onSizeChange={handleSizeChange}
-      onMilkTypeChange={handleMilkTypeChange}
     />
   );
 };

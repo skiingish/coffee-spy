@@ -10,29 +10,18 @@ import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
 import HelpMenu from './HelpMenu';
 import InstallPrompt from './InstallPrompt';
-import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
+// coffee selection values are drawn from context
+import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 import { Coffee } from 'lucide-react';
+import { useVenueNameVisibility } from '@/hooks/VenueNameVisibilityProvider';
 
 
 interface MapViewProps {
   markers: MarkerData[];
-  selectedCoffeeType: CoffeeType;
-  selectedSize: CoffeeSize;
-  selectedMilkType: CoffeeMilkType;
-  onCoffeeTypeChange: (value: CoffeeType) => void;
-  onSizeChange: (value: CoffeeSize) => void;
-  onMilkTypeChange: (value: CoffeeMilkType) => void;
 }
 
-const MapView: FC<MapViewProps> = ({ 
-  markers = [], 
-  selectedCoffeeType,
-  selectedSize,
-  selectedMilkType,
-  onCoffeeTypeChange,
-  onSizeChange,
-  onMilkTypeChange
-}) => {
+const MapView: FC<MapViewProps> = ({ markers = [] }) => {
+  useCoffeeSelection(); // initialize context (selection used implicitly by child components)
   const [dimensions, setDimensions] = useState({
     width: '100%',
     height: '100vh',
@@ -42,6 +31,7 @@ const MapView: FC<MapViewProps> = ({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [phase, setPhase] = useState(0);
+  const { showVenueNames } = useVenueNameVisibility();
 
   useEffect(() => {
     if (mapLoaded) return;
@@ -69,6 +59,8 @@ const MapView: FC<MapViewProps> = ({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // No need for local effect; context handles persistence
 
   if (markers.length === 0) {
     return <div>No markers to display</div>;
@@ -116,6 +108,7 @@ const MapView: FC<MapViewProps> = ({
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 borderColor: getRatingColor(marker.rating),
                 color: 'white',
+                
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = getRatingColor(
@@ -132,8 +125,14 @@ const MapView: FC<MapViewProps> = ({
               <span className='text-sm font-medium'>
                 {marker.price ? `$${marker.price.toFixed(2)}` : <Coffee className='inline' />}
               </span>
+              {showVenueNames && (
+                <span>
+                  {' '}{marker.venue_name || 'Unknown'}
+                </span>
+              )}
             </div>
           </Marker>
+          
         ))}
         <GlassContainer className='p-3 sm:p-4 max-w-[92vw] sm:max-w-md m-auto'>
           <div className='flex items-start justify-between gap-3'>
@@ -149,23 +148,7 @@ const MapView: FC<MapViewProps> = ({
 
           <div className='my-3 h-px bg-white/15' />
 
-          {/* <div className='mb-2 flex flex-wrap items-center gap-2'>
-            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>
-              {CoffeeSizes[selectedSize]} {isCoffeeTypeStandard(selectedCoffeeType) ? 'Standard' : 'Specialty'} Coffee
-            </span>
-            <span className='inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[10px] sm:text-xs'>
-              {isMilkTypeStandard(selectedMilkType) ? 'Standard' : 'Alternative'} Milk
-            </span>
-          </div> */}
-
-          <CoffeeSelector
-            selectedCoffeeType={selectedCoffeeType}
-            selectedMilkType={selectedMilkType}
-            selectedSize={selectedSize}
-            onCoffeeTypeChange={onCoffeeTypeChange}
-            onMilkTypeChange={onMilkTypeChange}
-            onSizeChange={onSizeChange}
-          />
+          <CoffeeSelector />
         </GlassContainer>
         {/* Footer GlassContainer for Install Prompt */}
         <div className='absolute inset-x-0 bottom-4 flex justify-center pointer-events-none'>
@@ -182,11 +165,6 @@ const MapView: FC<MapViewProps> = ({
           isOpen={isDrawerOpen}
           onOpenChange={setIsDrawerOpen}
           marker={selectedMarker}
-          selectedCoffeeType={{
-            coffeeType: selectedCoffeeType,
-            coffeeSize: selectedSize,
-            coffeeMilkType: selectedMilkType,
-          }}
         />
         </Map>
       )}
@@ -202,21 +180,3 @@ const MapView: FC<MapViewProps> = ({
 
 export default MapView;
 
-// ${marker.price?.toFixed(2)}
-
-{
-  /* <div className='text-red-500 cursor-pointer'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                className='w-6 h-6'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z'
-                  clipRule='evenodd'
-                />
-              </svg>
-            </div> */
-}

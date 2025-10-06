@@ -12,19 +12,16 @@ import AddCoffeeReport from './AddCoffeeReport';
 import PriceTrendChart from './PriceTrendChart';
 import RatingsTrendChart from './RatingsTrendChart';
 import { Rating } from './ui/rating';
-import { CoffeeMilkType, CoffeeSize, CoffeeType } from '@/types/coffeeTypes';
+// Coffee type info comes from context
+import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 import { getReportsByVenueId } from '@/actions/report';
 import { getRatingColor } from '@/utils/ratingColors';
+import { timeAgo, toDate } from '@/utils/timeUtils';
 
 interface MarkerDrawerProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   marker: MarkerData | null;
-  selectedCoffeeType: {
-    coffeeType: CoffeeType;
-    coffeeSize: CoffeeSize;
-    coffeeMilkType: CoffeeMilkType;
-  };
 }
 
 const getAvgRating = (reports: CoffeeReportObject[]) => {
@@ -38,12 +35,8 @@ const getAvgRating = (reports: CoffeeReportObject[]) => {
   return totalRating / validReports.length;
 };
 
-const MarkerDrawer: FC<MarkerDrawerProps> = ({
-  isOpen,
-  onOpenChange,
-  marker,
-  selectedCoffeeType,
-}) => {
+const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker }) => {
+  const { coffeeType, coffeeSize, coffeeMilkType } = useCoffeeSelection();
   const [reports, setReports] = useState<CoffeeReportObject[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -100,30 +93,6 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
     const avg = priceValues.reduce((a, b) => a + b, 0) / priceValues.length;
     return { min, max, avg };
   }, [priceValues]);
-
-  // Helpers
-  const toDate = (d: Date | string | number | null | undefined): Date | null => {
-    if (!d) return null;
-    const n = new Date(d);
-    return isNaN(n.getTime()) ? null : n;
-  };
-
-  const timeAgo = (date: Date | null): string => {
-    if (!date) return '';
-    const diff = Date.now() - date.getTime();
-    const sec = Math.floor(diff / 1000);
-    if (sec < 60) return 'just now';
-    const min = Math.floor(sec / 60);
-    if (min < 60) return `${min}m ago`;
-    const hr = Math.floor(min / 60);
-    if (hr < 24) return `${hr}h ago`;
-    const day = Math.floor(hr / 24);
-    if (day < 30) return `${day}d ago`;
-    const mo = Math.floor(day / 30);
-    if (mo < 12) return `${mo}mo ago`;
-    const yr = Math.floor(mo / 12);
-    return `${yr}y ago`;
-  };
 
   const lastUpdated = useMemo(() => {
     const times = reports
@@ -198,7 +167,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
     }));
   }, [reports]);
 
-  const coffeeSummary = `${selectedCoffeeType.coffeeType} • ${selectedCoffeeType.coffeeSize} • ${selectedCoffeeType.coffeeMilkType}`;
+  const coffeeSummary = `${coffeeType} • ${coffeeSize} • ${coffeeMilkType}`;
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -322,8 +291,8 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
           <div className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs uppercase tracking-wide text-white/60">
-                  Latest reported price
+                <div className="text-xs uppercase text-white/60">
+                  Selected coffee price
                 </div>
                 <div className="mt-1 text-2xl font-semibold">
                   {typeof marker?.price === 'number' ? `$${marker.price.toFixed(2)}` : '—'}
@@ -352,7 +321,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
             <PriceTrendChart data={chartData} />
           </div>
 
-          {/* Recent comment */}
+          {/* Recent report */}
           {!loading && reportCount > 0 && (
             <div className="mt-4 rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
               <div className="text-xs uppercase tracking-wide text-white/60 mb-2">Latest report</div>
@@ -371,7 +340,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
                 {typeof mostRecentReport?.price === 'number' && (
                   <span className="inline-flex items-center gap-1">
                     <span>💲</span>
-                    ${mostRecentReport.price.toFixed(2)}
+                    ${mostRecentReport.price.toFixed(2)} - {mostRecentReport.coffee_id}
                   </span>
                 )}
               </div>
@@ -402,12 +371,11 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-sm font-semibold">Add a report</h2>
                 <span className="text-xs text-white/60">
-                  {`${selectedCoffeeType.coffeeType} • ${selectedCoffeeType.coffeeSize} • ${selectedCoffeeType.coffeeMilkType}`}
+                  {`${coffeeType} • ${coffeeSize} • ${coffeeMilkType}`}
                 </span>
               </div>
               <AddCoffeeReport
                 venueId={marker.venue_id}
-                selectedCoffeeType={selectedCoffeeType}
                 onOpenChange={onOpenChange}
               />
             </div>

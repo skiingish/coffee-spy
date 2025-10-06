@@ -1,11 +1,13 @@
+"use client";
 import { FC, useState } from 'react';
-import { HelpCircle, MapPin } from 'lucide-react';
+import { HelpCircle, MapPin, Eye, EyeOff } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
 import GlassContainer from './GlassContainer';
+import { useVenueNameVisibility } from '@/hooks/VenueNameVisibilityProvider';
 
 interface HelpMenuProps {
   className?: string;
@@ -13,6 +15,7 @@ interface HelpMenuProps {
 
 const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { showVenueNames, toggleVenueNames } = useVenueNameVisibility();
 
   const handleAddVenue = () => {
     // TODO: Implement add venue functionality
@@ -29,12 +32,34 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
           </GlassContainer>
         </div>
       </PopoverTrigger>
-      <PopoverContent 
-        side="top" 
+      <PopoverContent
+        side="top"
         align="start"
-        className="w-48 p-0 border-0 bg-transparent shadow-none"
+        className="w-56 p-0 border-0 bg-transparent shadow-none"
       >
-        <GlassContainer className="p-2">
+        <GlassContainer className="p-2 flex flex-col">
+          {/* Toggle venue names */}
+            <button
+              onClick={toggleVenueNames}
+              className="w-full flex items-center gap-3 p-3 text-left hover:bg-white/10 rounded-lg transition-colors text-white"
+            >
+              <div className="flex items-center justify-center w-8 h-8 bg-indigo-500/20 rounded-full">
+                {showVenueNames ? (
+                  <EyeOff className="w-4 h-4 text-indigo-300" />
+                ) : (
+                  <Eye className="w-4 h-4 text-indigo-300" />
+                )}
+              </div>
+              <div>
+                <div className="text-sm font-medium">
+                  {showVenueNames ? 'Hide venue names' : 'Show venue names'}
+                </div>
+                <div className="text-xs text-white/60">
+                  {showVenueNames ? 'Remove map labels' : 'Display labels on map'}
+                </div>
+              </div>
+            </button>
+          {/* Add venue */}
           <button
             onClick={handleAddVenue}
             className="w-full flex items-center gap-3 p-3 text-left hover:bg-white/10 rounded-lg transition-colors text-white"
