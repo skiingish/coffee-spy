@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from 'react';
-import { Menu } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 import { CoffeeSizes, CoffeeTypes, CoffeeMilkTypes } from '@/types/coffeeTypes';
@@ -26,8 +26,8 @@ export const CoffeeSelector: FC<CoffeeSelectorProps> = ({ onOpen, className }) =
       onClick={handleClick}
       aria-label='Open coffee selection'
     >
-      <span className='truncate'>{summaryText}</span>
-      <Menu className='h-4 w-4 opacity-70' />
+      <span className='truncate'>Searching for a <span className='font-bold italic'>{summaryText}</span></span>
+      <Edit className='h-6 w-6 opacity-70' />
     </Button>
   );
 };
