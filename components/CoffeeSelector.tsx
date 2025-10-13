@@ -5,7 +5,6 @@ import { Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 import { CoffeeSizes, CoffeeTypes, CoffeeMilkTypes } from '@/types/coffeeTypes';
-// This component is intentionally minimal: just a trigger button. Modal handled elsewhere.
 
 interface CoffeeSelectorProps { onOpen?: () => void; className?: string; }
 
