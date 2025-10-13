@@ -8,6 +8,7 @@ import { getRatingColor } from '@/utils/ratingColors';
 import GlassContainer from './GlassContainer';
 import MarkerDrawer from './MarkerDrawer';
 import CoffeeSelector from './CoffeeSelector';
+import CoffeeSelectionModal from './CoffeeSelectionModal';
 import HelpMenu from './HelpMenu';
 import InstallPrompt from './InstallPrompt';
 // coffee selection values are drawn from context
@@ -29,6 +30,7 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
 
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [coffeeModalOpen, setCoffeeModalOpen] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [phase, setPhase] = useState(0);
   const { showVenueNames } = useVenueNameVisibility();
@@ -148,8 +150,9 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
 
           <div className='my-3 h-px bg-white/15' />
 
-          <CoffeeSelector />
+          <CoffeeSelector onOpen={() => setCoffeeModalOpen(true)} />
         </GlassContainer>
+        <CoffeeSelectionModal open={coffeeModalOpen} onOpenChange={setCoffeeModalOpen} />
         {/* Footer GlassContainer for Install Prompt */}
         <div className='absolute inset-x-0 bottom-4 flex justify-center pointer-events-none'>
           <GlassContainer className='pointer-events-auto p-2 sm:p-3 max-w-[92vw] sm:max-w-lg'>
@@ -165,6 +168,7 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
           isOpen={isDrawerOpen}
           onOpenChange={setIsDrawerOpen}
           marker={selectedMarker}
+          onOpenCoffeeSelection={() => setCoffeeModalOpen(true)}
         />
         </Map>
       )}

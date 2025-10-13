@@ -15,21 +15,7 @@ import {
 import { Button } from './ui/button';
 import { NumberInput } from './ui/numberInput';
 import { Rating } from './ui/rating';
-import {
-  CoffeeMilkType,
-  CoffeeType,
-  CoffeeSize,
-  CoffeeTypes,
-  CoffeeSizes,
-  CoffeeMilkTypes,
-} from '@/types/coffeeTypes';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
+import { CoffeeMilkType, CoffeeType, CoffeeSize } from '@/types/coffeeTypes';
 import { submitReport } from '@/actions/report';
 import { toast } from 'sonner';
 import { getBlockedUntil, makeGroupKey, msToCompact, recordSubmission } from '@/utils/reviewGate';
@@ -40,6 +26,7 @@ import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
 interface AddCoffeeReportProps {
   venueId?: number;
   onOpenChange?: (open: boolean) => void;
+  onOpenCoffeeSelection?: () => void; // new: open global coffee selection modal
 }
 
 const formSchema = z.object({
@@ -61,9 +48,10 @@ const formSchema = z.object({
 const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   venueId = 1,
   onOpenChange,
+  onOpenCoffeeSelection,
 }) => {
   const { coffeeType, coffeeSize, coffeeMilkType } = useCoffeeSelection();
-  const [editingCoffee, setEditingCoffee] = useState(false);
+  // editingCoffee legacy state removed (inline editing deprecated)
   const [blockedUntil, setBlockedUntil] = useState<number | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -141,106 +129,16 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <div className='flex flex-col gap-2'>
-            {!editingCoffee ? (
-              <>
-                {/* <h2>{selectedCoffeeTypeString}</h2> */}
-                <Button
-                  className='text-muted'
-                  variant='ghost'
-                  size='sm'
-                  type='button'
-                  onClick={() => setEditingCoffee(true)}
-                >
-                  Wrong coffee?
-                </Button>
-              </>
-            ) : (
-              <div className='space-y-4'>
-                <FormField
-                  control={form.control}
-                  name='coffeeType'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Coffee Type</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger id='coffee-type'>
-                          <SelectValue placeholder='Select coffee type' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(CoffeeTypes).map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {CoffeeTypes[type as CoffeeType]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name='coffeeSize'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger id='coffee-size'>
-                          <SelectValue placeholder='Select size' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(CoffeeSizes).map((size) => (
-                            <SelectItem key={size} value={size}>
-                              {CoffeeSizes[size as CoffeeSize]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name='coffeeMilkType'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Milk Type</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger id='milk-type'>
-                          <SelectValue placeholder='Select milk type' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(CoffeeMilkTypes).map((milk) => (
-                            <SelectItem key={milk} value={milk}>
-                              {CoffeeMilkTypes[milk as CoffeeMilkType]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  className='text-muted'
-                  variant='default'
-                  size='sm'
-                  type='button'
-                  onClick={() => setEditingCoffee(false)}
-                >
-                  Select coffee
-                </Button>
-              </div>
-            )}
+            <Button
+              className='text-muted underline-offset-2 hover:underline w-fit px-0'
+              variant='ghost'
+              size='sm'
+              type='button'
+              onClick={onOpenCoffeeSelection}
+              disabled={!onOpenCoffeeSelection}
+            >
+              Wrong coffee?
+            </Button>
           </div>
 
           <FormField

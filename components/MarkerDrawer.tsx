@@ -22,6 +22,7 @@ interface MarkerDrawerProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   marker: MarkerData | null;
+  onOpenCoffeeSelection?: () => void;
 }
 
 const getAvgRating = (reports: CoffeeReportObject[]) => {
@@ -35,7 +36,7 @@ const getAvgRating = (reports: CoffeeReportObject[]) => {
   return totalRating / validReports.length;
 };
 
-const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker }) => {
+const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onOpenCoffeeSelection }) => {
   const { coffeeType, coffeeSize, coffeeMilkType } = useCoffeeSelection();
   const [reports, setReports] = useState<CoffeeReportObject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -377,6 +378,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker }) =
               <AddCoffeeReport
                 venueId={marker.venue_id}
                 onOpenChange={onOpenChange}
+                onOpenCoffeeSelection={onOpenCoffeeSelection}
               />
             </div>
           </div>
