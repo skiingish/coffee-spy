@@ -168,7 +168,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
     }));
   }, [reports]);
 
-  const coffeeSummary = `${coffeeType} • ${coffeeSize} • ${coffeeMilkType}`;
+  const coffeeSummary = `${coffeeSize} • ${coffeeMilkType} • ${coffeeType}`;
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -369,11 +369,11 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
         {marker?.venue_id != null && (
           <div className="sticky bottom-0 z-10 border-t border-white/10 bg-transparent px-4 py-3">
             <div className="rounded-lg bg-white/5 ring-1 ring-white/10 p-3">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-sm font-semibold">Add a report</h2>
-                <span className="text-xs text-white/60">
-                  {`${coffeeType} • ${coffeeSize} • ${coffeeMilkType}`}
-                </span>
+              <div className="flex flex-col items-left justify-between gap-2">
+                <h2 className="text-sm font-semibold">Add a report for:</h2>
+                <p className="text-muted text-xs">
+                  {`A ${coffeeSize} • ${coffeeMilkType} • ${coffeeType}`}
+                </p>
               </div>
               <AddCoffeeReport
                 venueId={marker.venue_id}

@@ -127,17 +127,17 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
           <div className='flex flex-col gap-2'>
             <Button
-              className='text-muted underline-offset-2 hover:underline w-fit px-0'
+              className='italic text-xs text-white/60 hover:underline w-fit px-0'
               variant='ghost'
               size='sm'
               type='button'
               onClick={onOpenCoffeeSelection}
               disabled={!onOpenCoffeeSelection}
             >
-              Wrong coffee?
+              (Wrong coffee?)
             </Button>
           </div>
 
@@ -146,7 +146,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
             name='price'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cost Me</FormLabel>
+                <FormLabel>It cost Me</FormLabel>
                 <FormControl>
                   <NumberInput
                     placeholder='5.80'
