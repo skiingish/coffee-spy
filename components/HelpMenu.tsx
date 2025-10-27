@@ -1,6 +1,6 @@
 "use client";
 import { FC, useState } from 'react';
-import { HelpCircle, MapPin, Eye, EyeOff } from 'lucide-react';
+import { HelpCircle, Eye, EyeOff } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -17,11 +17,11 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showVenueNames, toggleVenueNames } = useVenueNameVisibility();
 
-  const handleAddVenue = () => {
-    // TODO: Implement add venue functionality
-    console.log('Add venue clicked');
-    setIsOpen(false);
-  };
+  // const handleAddVenue = () => {
+  //   // TODO: Implement add venue functionality
+  //   console.log('Add venue clicked');
+  //   setIsOpen(false);
+  // };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -60,7 +60,7 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
               </div>
             </button>
           {/* Add venue */}
-          <button
+          {/* <button
             onClick={handleAddVenue}
             className="w-full flex items-center gap-3 p-3 text-left hover:bg-white/10 rounded-lg transition-colors text-white"
           >
@@ -71,7 +71,7 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
               <div className="text-sm font-medium">Add a venue</div>
               <div className="text-xs text-white/60">Report a new coffee location</div>
             </div>
-          </button>
+          </button> */}
         </GlassContainer>
       </PopoverContent>
     </Popover>
