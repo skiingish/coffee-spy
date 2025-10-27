@@ -146,7 +146,7 @@ const AddCoffeeReport: FC<AddCoffeeReportProps> = ({
             name='price'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>It cost Me</FormLabel>
+                <FormLabel>Cost Me</FormLabel>
                 <FormControl>
                   <NumberInput
                     placeholder='5.80'

@@ -154,12 +154,12 @@ const MapView: FC<MapViewProps> = ({ markers = [] }) => {
         </GlassContainer>
         <CoffeeSelectionModal open={coffeeModalOpen} onOpenChange={setCoffeeModalOpen} />
         {/* Footer GlassContainer for Install Prompt */}
-        <div className='absolute inset-x-0 bottom-4 flex justify-center pointer-events-none'>
+        <div className='absolute inset-x-0 bottom-12 flex justify-center pointer-events-none'>
             <InstallPrompt />
         </div>
         
         {/* Help Menu in bottom left corner */}
-        <div className='absolute bottom-4 left-4 pointer-events-none'>
+        <div className='absolute bottom-12 left-6 pointer-events-none'>
           <HelpMenu className='pointer-events-auto' />
         </div>
         <MarkerDrawer
