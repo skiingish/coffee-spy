@@ -1,6 +1,6 @@
 "use client";
 import { FC, useState } from 'react';
-import { HelpCircle, Eye, EyeOff } from 'lucide-react';
+import { HelpCircle, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/popover';
 import GlassContainer from './GlassContainer';
 import { useVenueNameVisibility } from '@/hooks/VenueNameVisibilityProvider';
+import FeedbackModal from './FeedbackModal';
 
 interface HelpMenuProps {
   className?: string;
@@ -15,6 +16,7 @@ interface HelpMenuProps {
 
 const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const { showVenueNames, toggleVenueNames } = useVenueNameVisibility();
 
   // const handleAddVenue = () => {
@@ -23,7 +25,14 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
   //   setIsOpen(false);
   // };
 
+  const handleFeedbackClick = () => {
+    setIsOpen(false);
+    setFeedbackModalOpen(true);
+  };
+
   return (
+    <>
+      <FeedbackModal open={feedbackModalOpen} onOpenChange={setFeedbackModalOpen} />
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <div className={`${className}`}>
@@ -72,9 +81,23 @@ const HelpMenu: FC<HelpMenuProps> = ({ className }) => {
               <div className="text-xs text-white/60">Report a new coffee location</div>
             </div>
           </button> */}
+          {/* Submit feedback */}
+          <button
+            onClick={handleFeedbackClick}
+            className="w-full flex items-center gap-3 p-3 text-left hover:bg-white/10 rounded-lg transition-colors text-white"
+          >
+            <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 rounded-full">
+              <MessageSquare className="w-4 h-4 text-purple-300" />
+            </div>
+            <div>
+              <div className="text-sm font-medium">Submit feedback</div>
+              <div className="text-xs text-white/60">Share your thoughts</div>
+            </div>
+          </button>
         </GlassContainer>
       </PopoverContent>
     </Popover>
+    </>
   );
 };
 
