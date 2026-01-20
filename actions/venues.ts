@@ -13,3 +13,23 @@ export async function getVenues() {
         return { venues: [], error: 'Failed to fetch venues' }
     }
 }
+
+export async function addVenue(data: {
+    name: string;
+    address?: string;
+    latitude: number;
+    longitude: number;
+}) {
+    try {
+        const result = await db.insert(venues).values({
+            name: data.name,
+            address: data.address,
+            latitude: data.latitude.toString(),
+            longitude: data.longitude.toString(),
+        }).returning();
+        return { venue: result[0], error: null };
+    } catch (error) {
+        console.error('Failed to add venue:', error);
+        return { venue: null, error: 'Failed to add venue' };
+    }
+}

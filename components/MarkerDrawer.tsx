@@ -1,22 +1,22 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { CoffeeReportObject, MarkerData } from '@/types/types';
+import { FC, useEffect, useMemo, useState } from "react";
+import { CoffeeReportObject, MarkerData } from "@/types/types";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AddCoffeeReport from './AddCoffeeReport';
-import PriceTrendChart from './PriceTrendChart';
-import RatingsTrendChart from './RatingsTrendChart';
-import { Rating } from './ui/rating';
+} from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AddCoffeeReport from "./AddCoffeeReport";
+import PriceTrendChart from "./PriceTrendChart";
+import RatingsTrendChart from "./RatingsTrendChart";
+import { Rating } from "./ui/rating";
 // Coffee type info comes from context
-import { useCoffeeSelection } from '@/hooks/CoffeeSelectionProvider';
-import { getReportsByVenueId } from '@/actions/report';
-import { getRatingColor } from '@/utils/ratingColors';
-import { timeAgo, toDate } from '@/utils/timeUtils';
+import { useCoffeeSelection } from "@/hooks/CoffeeSelectionProvider";
+import { getReportsByVenueId } from "@/actions/report";
+import { getRatingColor } from "@/utils/ratingColors";
+import { timeAgo, toDate } from "@/utils/timeUtils";
 
 interface MarkerDrawerProps {
   isOpen: boolean;
@@ -31,12 +31,17 @@ const getAvgRating = (reports: CoffeeReportObject[]) => {
   if (validReports.length === 0) return 0;
   const totalRating = validReports.reduce(
     (acc, report) => acc + (report.rating || 0),
-    0
+    0,
   );
   return totalRating / validReports.length;
 };
 
-const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onOpenCoffeeSelection }) => {
+const MarkerDrawer: FC<MarkerDrawerProps> = ({
+  isOpen,
+  onOpenChange,
+  marker,
+  onOpenCoffeeSelection,
+}) => {
   const { coffeeType, coffeeSize, coffeeMilkType } = useCoffeeSelection();
   const [reports, setReports] = useState<CoffeeReportObject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +54,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
         const res = await getReportsByVenueId(marker.venue_id);
         if (cancelled) return;
         if (res.error) {
-          console.error('Error fetching reports:', res.error);
+          console.error("Error fetching reports:", res.error);
         } else if (res.reports) {
           setReports(res.reports);
         }
@@ -72,7 +77,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
     const counts = [0, 0, 0, 0, 0]; // 1..5
     for (const r of reports) {
       const v = r?.rating;
-      if (typeof v === 'number' && v > 0) {
+      if (typeof v === "number" && v > 0) {
         const idx = Math.min(5, Math.max(1, Math.round(v))) - 1;
         counts[idx] += 1;
       }
@@ -82,7 +87,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
 
   const priceValues = useMemo(() => {
     const vals = reports
-      .map((r) => (typeof r.price === 'number' ? r.price : null))
+      .map((r) => (typeof r.price === "number" ? r.price : null))
       .filter((v): v is number => v != null);
     return vals;
   }, [reports]);
@@ -112,7 +117,10 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
     return sorted[0] || null;
   }, [reports]);
 
-  const avgRatingColor = useMemo(() => getRatingColor(avgRating || 0), [avgRating]);
+  const avgRatingColor = useMemo(
+    () => getRatingColor(avgRating || 0),
+    [avgRating],
+  );
 
   const mostCommonRating = useMemo(() => {
     let best = 0;
@@ -130,10 +138,13 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
   const recentPrices = useMemo(() => {
     const withDate = reports
       .map((r) => ({
-        price: typeof r.price === 'number' ? r.price : null,
+        price: typeof r.price === "number" ? r.price : null,
         date: toDate(r.created_at)?.getTime() ?? 0,
       }))
-      .filter((x) => x.price != null && x.date > 0) as { price: number; date: number }[];
+      .filter((x) => x.price != null && x.date > 0) as {
+      price: number;
+      date: number;
+    }[];
     const sorted = withDate.sort((a, b) => a.date - b.date).slice(-8);
     if (!sorted.length) return null;
     const prices = sorted.map((x) => x.price);
@@ -148,7 +159,9 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
     return recentPrices.data.map((item) => ({
       price: item.price,
       date: item.date,
-      month: new Date(item.date).toLocaleDateString('en-US', { month: 'short' }),
+      month: new Date(item.date).toLocaleDateString("en-US", {
+        month: "short",
+      }),
     }));
   }, [recentPrices]);
 
@@ -156,15 +169,20 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
   const ratingsChartData = useMemo(() => {
     const withDate = reports
       .map((r) => ({
-        rating: typeof r.rating === 'number' ? r.rating : null,
+        rating: typeof r.rating === "number" ? r.rating : null,
         date: toDate(r.created_at)?.getTime() ?? 0,
       }))
-      .filter((x) => x.rating != null && x.date > 0) as { rating: number; date: number }[];
+      .filter((x) => x.rating != null && x.date > 0) as {
+      rating: number;
+      date: number;
+    }[];
     const sorted = withDate.sort((a, b) => a.date - b.date).slice(-8);
     return sorted.map((item) => ({
       rating: item.rating,
       date: item.date,
-      month: new Date(item.date).toLocaleDateString('en-US', { month: 'short' }),
+      month: new Date(item.date).toLocaleDateString("en-US", {
+        month: "short",
+      }),
     }));
   }, [reports]);
 
@@ -177,12 +195,12 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
         className="flex h-full w-[400px] max-w-[92vw] flex-col text-white/90"
       >
         {/* Sticky header */}
-  <SheetHeader className="sticky top-0 px-4 py-3 border-b border-white/10 text-left ">
+        <SheetHeader className="sticky top-0 px-4 py-3 border-b border-white/10 text-left ">
           <div className="flex items-start justify-between gap-3">
             <div>
               <SheetTitle className="text-white flex items-center gap-2">
                 <span className="inline-block text-lg">☕</span>
-                {marker?.venue_name ?? 'Venue'}
+                {marker?.venue_name ?? "Venue"}
               </SheetTitle>
               <SheetDescription className="text-white/80 font-medium">
                 {coffeeSummary}
@@ -191,10 +209,12 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
             {!loading && reportCount > 0 && (
               <span
                 className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
-                style={{ backgroundColor: `${avgRatingColor}20`, color: avgRatingColor }}
+                style={{
+                  backgroundColor: `${avgRatingColor}20`,
+                  color: avgRatingColor,
+                }}
                 aria-label={`Average rating ${avgRating.toFixed(1)} out of 5`}
-              >
-              </span>
+              ></span>
             )}
           </div>
         </SheetHeader>
@@ -206,7 +226,7 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="text-xs uppercase tracking-wide text-white/60">
-                  Average rating
+                  Average venue rating
                 </div>
                 {loading ? (
                   <div className="mt-2 h-7 w-24 rounded bg-white/20 animate-pulse" />
@@ -233,24 +253,33 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
 
             <Tabs defaultValue="trend" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/10">
-                <TabsTrigger value="trend" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20">
+                <TabsTrigger
+                  value="trend"
+                  className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20"
+                >
                   Trend
                 </TabsTrigger>
-                <TabsTrigger value="ratings" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20">
+                <TabsTrigger
+                  value="ratings"
+                  className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20"
+                >
                   Ratings
                 </TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="trend" className="mt-4">
                 <RatingsTrendChart data={ratingsChartData} />
               </TabsContent>
-              
+
               <TabsContent value="ratings" className="mt-4">
                 {/* Rating breakdown */}
                 {loading ? (
                   <div className="space-y-2">
                     {[...Array(5)].map((_, i) => (
-                      <div key={i} className="h-3 w-full rounded bg-white/10 overflow-hidden">
+                      <div
+                        key={i}
+                        className="h-3 w-full rounded bg-white/10 overflow-hidden"
+                      >
                         <div className="h-full w-1/2 bg-white/30 animate-pulse" />
                       </div>
                     ))}
@@ -259,26 +288,38 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
                   <div className="space-y-2">
                     {[5, 4, 3, 2, 1].map((star) => {
                       const count = ratingCounts[star - 1] || 0;
-                      const pct = reportCount ? Math.round((count / reportCount) * 100) : 0;
+                      const pct = reportCount
+                        ? Math.round((count / reportCount) * 100)
+                        : 0;
                       return (
                         <div key={star} className="flex items-center gap-3">
-                          <div className="w-8 text-xs text-white/70">{star}★</div>
+                          <div className="w-8 text-xs text-white/70">
+                            {star}★
+                          </div>
                           <div className="flex-1 h-2 rounded bg-white/10 overflow-hidden">
                             <div
                               className="h-full transition-all duration-500"
-                              style={{ width: `${pct}%`, backgroundColor: getRatingColor(star) }}
+                              style={{
+                                width: `${pct}%`,
+                                backgroundColor: getRatingColor(star),
+                              }}
                             />
                           </div>
-                          <div className="w-14 text-right text-xs text-white/70">{pct}% ({count})</div>
+                          <div className="w-14 text-right text-xs text-white/70">
+                            {pct}% ({count})
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 )}
-                
+
                 {!loading && mostCommonRating && (
                   <div className="mt-3 text-xs text-white/70">
-                    Most common rating: <span className="font-medium text-white">{mostCommonRating}★</span>
+                    Most common rating:{" "}
+                    <span className="font-medium text-white">
+                      {mostCommonRating}★
+                    </span>
                   </div>
                 )}
               </TabsContent>
@@ -296,7 +337,9 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
                   Selected coffee price
                 </div>
                 <div className="mt-1 text-2xl font-semibold">
-                  {typeof marker?.price === 'number' ? `$${marker.price.toFixed(2)}` : '—'}
+                  {typeof marker?.price === "number"
+                    ? `$${marker.price.toFixed(2)}`
+                    : "—"}
                 </div>
               </div>
               <div className="text-right">
@@ -306,14 +349,15 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
                 <div className="mt-1 text-sm">
                   {priceStats ? (
                     <>
-                      ${priceStats.min.toFixed(2)} – ${priceStats.max.toFixed(2)}
+                      ${priceStats.min.toFixed(2)} – $
+                      {priceStats.max.toFixed(2)}
                     </>
                   ) : (
-                    '—'
+                    "—"
                   )}
                 </div>
                 <div className="text-xs text-white/60">
-                  {priceStats ? `avg $${priceStats.avg.toFixed(2)}` : ''}
+                  {priceStats ? `avg $${priceStats.avg.toFixed(2)}` : ""}
                 </div>
               </div>
             </div>
@@ -325,23 +369,25 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
           {/* Recent report */}
           {!loading && reportCount > 0 && (
             <div className="mt-4 rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="text-xs uppercase tracking-wide text-white/60 mb-2">Latest report</div>
+              <div className="text-xs uppercase tracking-wide text-white/60 mb-2">
+                Latest report
+              </div>
               <div className="flex items-start justify-between gap-3">
                 <div className="text-right text-xs text-white/60 whitespace-nowrap">
                   {timeAgo(toDate(mostRecentReport?.created_at) || null)}
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-3 text-xs text-white/70">
-                {typeof mostRecentReport?.rating === 'number' && (
+                {typeof mostRecentReport?.rating === "number" && (
                   <span className="inline-flex items-center gap-1">
                     <span>★</span>
                     {mostRecentReport.rating?.toFixed(1)}
                   </span>
                 )}
-                {typeof mostRecentReport?.price === 'number' && (
+                {typeof mostRecentReport?.price === "number" && (
                   <span className="inline-flex items-center gap-1">
-                    <span>💲</span>
-                    ${mostRecentReport.price.toFixed(2)} - {mostRecentReport.coffee_id}
+                    <span>💲</span>${mostRecentReport.price.toFixed(2)} -{" "}
+                    {mostRecentReport.coffee_id}
                   </span>
                 )}
               </div>
@@ -354,14 +400,17 @@ const MarkerDrawer: FC<MarkerDrawerProps> = ({ isOpen, onOpenChange, marker, onO
               <div className="text-2xl mb-2">📝</div>
               <div className="text-sm font-medium">No reports yet</div>
               <div className="text-xs text-white/60 mt-1">
-                Be the first to add a rating and price for this coffee at this venue.
+                Be the first to add a rating and price for this coffee at this
+                venue.
               </div>
             </div>
           )}
 
           {/* Meta */}
           <div className="mt-4 text-xs text-white/60">
-            {lastUpdated ? `Last updated ${timeAgo(lastUpdated)} • ${lastUpdated.toLocaleDateString()} ${lastUpdated.toLocaleTimeString()}` : ''}
+            {lastUpdated
+              ? `Last updated ${timeAgo(lastUpdated)} • ${lastUpdated.toLocaleDateString()} ${lastUpdated.toLocaleTimeString()}`
+              : ""}
           </div>
         </div>
 
