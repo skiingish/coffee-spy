@@ -22,4 +22,10 @@ export default defineConfig({
       use: { channel: 'msedge' },
     },
   ],
+  webServer: {
+    command: 'npm run build && npm run start -- -p 3100',
+    url: baseURL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+  },
 });
