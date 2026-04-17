@@ -2,7 +2,7 @@
 import { FC, useEffect, useState, useRef } from "react";
 import CoffeeLoadingScreen from "@/components/CoffeeLoader";
 import Map, { Marker } from "react-map-gl/mapbox";
-import type { MapRef } from "react-map-gl";
+import type { MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MarkerData } from "@/types/types";
 import { getRatingColor } from "@/utils/ratingColors";
