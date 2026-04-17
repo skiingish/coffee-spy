@@ -23,9 +23,16 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run start -- -p 3100',
+    command: 'npx next dev -p 3100',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    env: {
+      NODE_ENV: 'development',
+      DATABASE_URL: '',
+      NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: '',
+      NEXT_PUBLIC_ADSENSE_CLIENT: '',
+      NEXT_PUBLIC_ADSENSE_SLOT: '',
+    },
   },
 });
